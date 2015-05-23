@@ -7,13 +7,17 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+    static Stage stage;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
-        primaryStage.setTitle("Chat_me");
-        primaryStage.setScene(new Scene(root, 300, 400));
-        primaryStage.show();
+        this.stage = primaryStage;
+        stage.setTitle("Chat_me");
+        stage.setScene(new Scene(root, 290, 390));
+        stage.setResizable(false);
+        stage.show();
+
     }
 
 

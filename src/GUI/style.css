@@ -1,0 +1,7 @@
+.underline:hover{
+    -fx-underline: true;
+}
+
+.btnZoom:hover{
+	-fx-border-color: #fff;
+}
