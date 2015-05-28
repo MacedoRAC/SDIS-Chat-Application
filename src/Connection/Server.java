@@ -9,6 +9,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
+import Database.User;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -16,7 +18,7 @@ import com.sun.net.httpserver.HttpServer;
 
 public class Server {
 
-	private static ArrayList< Pair<String,String> > entries = new ArrayList< Pair<String,String> >();
+	private static ArrayList<User> users = new ArrayList<User>();
 	private static HttpServer server;
 	
 	/**
@@ -24,7 +26,6 @@ public class Server {
 	 */
 	public static void main(String[] args) {
 
-		//DEBUGGIN ONLY - WHOLE MAIN METHOD TO BE REMOVED
 		if(args.length<2)
 		{
 			System.out.println("Usage: java Server <address> <port>");
@@ -34,14 +35,14 @@ public class Server {
 				
 		int port = Integer.parseInt(args[1]);
 		
+		populateDatabase();
+		
 		try {
 			server =  HttpServer.create(new InetSocketAddress(InetAddress.getByName(args[0]),port), 0);		
 		} catch (IOException e) {
-			System.out.print("@Server:error creating server");
+			System.out.println("@Server:error creating server: "+e);
 			e.printStackTrace();
 		}
-		
-		populateDatabase();
 		
 		server.createContext("/login", new LoginHandler());
 		server.createContext("/signup", new SignupHandler());
@@ -61,6 +62,14 @@ public class Server {
 			int code=200;
 			if(method.equals("GET"))
 			{
+				int indE = query.indexOf("email=");
+				if(indE == -1)
+				{
+					System.out.println("@Server/login:bad request received - can't find \"email=\"");
+					response="error - no valid email query";
+					code=400;
+				}
+				
 				int indU = query.indexOf("user=");
 				if(indU == -1)
 				{
@@ -68,6 +77,7 @@ public class Server {
 					response="error - no valid user query";
 					code=400;
 				}
+				
 				int indP = query.indexOf("pass=");
 				if(indP == -1)
 				{
@@ -78,19 +88,21 @@ public class Server {
 				
 				if(response.equals("true"))
 				{
+					String email=query.substring(indE+"email=".length(),indU-2);
 					String user=query.substring(indU+"user=".length(),indP-2);
 					String pass=query.substring(indP+"pass=".length());
 					
-					int ind=findUser(user);
-					if(ind<0 || (ind>0 && !entries.get(ind).getSecond().equals(pass)))
+					int ind=findUser(email);
+					if(ind<0 || (ind>0 && !users.get(ind).getPassword().equals(pass)))
 					{
-						System.out.println("@Server/login:no match was found for that user-pass pair");
+						System.out.println("@Server/login:no match was found for that email-pass pair");
 						response="false";
-						code=404;
+						//code=404;
 					}
 					else
 					{
-						System.out.println("@Server/login: user-pass pair matched");
+						users.get(ind).setUsername(user);
+						System.out.println("@Server/login: email-pass pair matched");
 					}
 				}
 				
@@ -106,10 +118,10 @@ public class Server {
 				request.sendResponseHeaders(code, response.length());
 				OutputStream os = request.getResponseBody();
 				os.write(response.getBytes());
-				System.out.println("@Server:response sent \"" + response + "\"");
+				System.out.println("@Server/login:response sent \"" + response + "\"");
 				os.close();
 			} catch (IOException e) {
-				System.out.println("@Server:error sending response");
+				System.out.println("@Server/login:error sending response: "+e);
 				e.printStackTrace();
 			}
 		}
@@ -128,13 +140,14 @@ public class Server {
 			int code=200;
 			if(method.equals("PUT"))
 			{
-				int indU = query.indexOf("user=");
-				if(indU == -1)
+				int indE = query.indexOf("email=");
+				if(indE == -1)
 				{
-					System.out.println("@Server/signup:bad request received - can't find \"user=\"");
-					response="error - no valid user query";
+					System.out.println("@Server/signup:bad request received - can't find \"email=\"");
+					response="error - no valid email query";
 					code=400;
 				}
+								
 				int indP = query.indexOf("pass=");
 				if(indP == -1)
 				{
@@ -142,23 +155,23 @@ public class Server {
 					response="error - no valid pass query";
 					code=400;
 				}
-				
+								
 				if(response.equals("true"))
 				{
-					String user=query.substring(indU+"user=".length(),indP-2);
+					String email=query.substring(indE+"email=".length(),indP-2);
 					String pass=query.substring(indP+"pass=".length());
 					
-					int ind=findUser(user);
+					int ind=findUser(email);
 					if(ind<0)
 					{
-						entries.add(new Pair<String,String>(user,pass));
+						users.add(new User(email,pass));
 						System.out.println("@Server/signup:entry added");
 					}
 					else
 					{
-						System.out.println("@Server/signup:username already in use");
+						System.out.println("@Server/signup:email already in use");
 						response="false";
-						code=403;
+						//code=403;
 					}
 				}
 			}
@@ -177,89 +190,17 @@ public class Server {
 				os.close();
 				
 			} catch (IOException e) {
+				System.out.println("@Server:error sending response: "+e);
 				e.printStackTrace();
-				System.out.print("@Server:error sending response\n");
 			}
 		}
 	}
-	
-	/*static class SignupHandler implements HttpHandler {
-		public void handle(HttpExchange request) {
-			System.out.println("@Server/signup:request received");
-			String method = request.getRequestMethod();
-			System.out.println("Method:\""+method+"\"");
-			String query = request.getRequestURI().getQuery();
-			System.out.println("Query:\""+query+"\"");
-			String body = InStreamToString(request.getRequestBody());
-			System.out.println("Body:\""+body+"\"");
-			
-			String response="true";
-			int code=200;
-			if(method.equals("PUT"))
-			{
-				int indUB = body.indexOf("<username>");
-				int indUE = body.indexOf("</username>");
-				if(indUB==-1 || indUE==-1)
-				{
-					System.out.println("@Server/signup:bad request received - can't find \"<username>\" or \"</username>\" tags");
-					response="error - no <username> or </username> tags";
-					code=400;
-				}
-				
-				int indPB = body.indexOf("<password>");
-				int indPE = body.indexOf("</password>");
-				if(indPB==-1 || indPE==-1)
-				{
-					System.out.println("@Serve/signup:bad request received - can't find \"<password>\" or \"</password>\" tags");
-					response="error - no <password> or </password> tags";
-					code=400;
-				}
-				
-				if(response.equals("true"))
-				{
-					String user=query.substring(indUB+"<username>".length(),indUE);
-					String pass=query.substring(indPB+"<password>".length(),indPE);
-					
-					int ind=findUser(user);
-					if(ind<0)
-					{
-						entries.add(new Pair<String,String>(user,pass));
-						System.out.println("@Server/signup:entry added");
-					}
-					else
-					{
-						System.out.println("@Server/signup:username already in use");
-						response="false";
-						code=403;
-					}
-				}
-			}
-			else
-			{
-				System.out.println("@Server/signup:bad request received - invalid method (\""+method+"\")");
-				response="error - invalid method";
-				code=400;
-			}
-			
-			try {
-				request.sendResponseHeaders(code, response.length());				
-				OutputStream os = request.getResponseBody();
-				os.write(response.getBytes());
-				System.out.println("@Server:response sent \""+response+"\"");
-				os.close();
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.out.print("@Server:error sending response\n");
-			}
-		}
-	}*/
-	
-	private static int findUser(String username)
+		
+	private static int findUser(String email)
 	{
-		for(int i=0;i<entries.size();i++)
+		for(int i=0;i<users.size();i++)
 		{
-			if(entries.get(i).getFirst().equals(username)) return i;
+			if(users.get(i).getEmail().equals(email)) return i;
 		}
 		return -1;
 	}
@@ -295,11 +236,11 @@ public class Server {
 
 	private static void populateDatabase(){
 
-		entries.add(new Pair<>("Burn", "1234"));
-		entries.add(new Pair<>("Homer", "1234"));
-		entries.add(new Pair<>("Louis", "1234"));
-		entries.add(new Pair<>("Bart", "1234"));
-		entries.add(new Pair<>("Lisa", "1234"));
+		users.add(new User("burn@simpsons.us","Burn", "1234"));
+		users.add(new User("homer@simpsons.us","Homer", "1234"));
+		users.add(new User("louis@simpsons.us","Louis", "1234"));
+		users.add(new User("bart@simpsons.us","Bart", "1234"));
+		users.add(new User("lisa@simpsons.us","Lisa", "1234"));
 	}
 
 }
