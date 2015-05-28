@@ -58,7 +58,7 @@ public class Client {
 	 * 		"false" -> caso já exista um utilizador com esse username
 	 * 		"error - ..." ->  caso haja um erro no request (vê os vários erros na Server.SignupHandler.handle)
 	 */
-	private static String signup(String username, String password)
+	public static String signup(String username, String password)
 	{
 		//BUILD URL
 		URL url = null;
@@ -118,7 +118,7 @@ public class Client {
 	 * 		"false" -> caso não exista nenhum match com aquele username e password
 	 * 		"error - ..." ->  caso haja um erro no request (vê os vários erros na Server.LoginHandler.handle)
 	 */
-	private static String login(String username, String password)
+	public static String login(String username, String password)
 	{
 		//BUILD URL
 		URL url = null;

@@ -293,4 +293,13 @@ public class Server {
  
 	}
 
+	private static void populateDatabase(){
+
+		entries.add(new Pair<>("Burn", "1234"));
+		entries.add(new Pair<>("Homer", "1234"));
+		entries.add(new Pair<>("Louis", "1234"));
+		entries.add(new Pair<>("Bart", "1234"));
+		entries.add(new Pair<>("Lisa", "1234"));
+	}
+
 }
