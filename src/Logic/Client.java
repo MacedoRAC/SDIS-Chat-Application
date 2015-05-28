@@ -29,7 +29,7 @@ public class Client {
 		}
 
 		buildURL(args[0],Integer.parseInt(args[1]));
-		String ret;
+		/*String ret;
 		System.out.println("@Client: trying to signup...");
 		ret = signup("Serkite","12345");
 		System.out.println("@Client: signup returned "+ret);
@@ -39,12 +39,14 @@ public class Client {
 		System.out.println("@Server: login returned "+ret);
 		System.out.println("@Client: trying to signup again...");
 		ret = signup("Serkite","ABCD");
-		System.out.println("@Client: signup returned "+ret);
+		System.out.println("@Client: signup returned "+ret);*/
         
 	}
 	
 	private static void buildURL(String address, int port)
 	{
+		address = "localhost";
+		port = 8000;
 		urlS = "http://"+address+":"+port+"/";
 	}
 	
@@ -58,7 +60,7 @@ public class Client {
 	 * 		"false" -> caso já exista um utilizador com esse username
 	 * 		"error - ..." ->  caso haja um erro no request (vê os vários erros na Server.SignupHandler.handle)
 	 */
-	private static String signup(String username, String password)
+	public static String signup(String username, String password)
 	{
 		//BUILD URL
 		URL url = null;
@@ -118,7 +120,7 @@ public class Client {
 	 * 		"false" -> caso não exista nenhum match com aquele username e password
 	 * 		"error - ..." ->  caso haja um erro no request (vê os vários erros na Server.LoginHandler.handle)
 	 */
-	private static String login(String username, String password)
+	public static String login(String username, String password)
 	{
 		//BUILD URL
 		URL url = null;

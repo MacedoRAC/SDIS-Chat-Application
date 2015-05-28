@@ -22,7 +22,7 @@ public class Server {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void  main(String[] args) {
 
 		//DEBUGGIN ONLY - WHOLE MAIN METHOD TO BE REMOVED
 		if(args.length<2)
@@ -42,6 +42,7 @@ public class Server {
 		}
 		
 		//entries.add( new Pair<String,String>("Serkite","12345"));
+		populateDatabase();
 		
 		server.createContext("/login", new LoginHandler());
 		server.createContext("/signup", new SignupHandler());
@@ -291,6 +292,15 @@ public class Server {
  
 		return sb.toString();
  
+	}
+	
+	private static void populateDatabase(){
+		
+		entries.add(new Pair<>("Burn", "1234"));
+		entries.add(new Pair<>("Homer", "1234"));
+		entries.add(new Pair<>("Louis", "1234"));
+		entries.add(new Pair<>("Bart", "1234"));
+		entries.add(new Pair<>("Lisa", "1234"));
 	}
 
 }
