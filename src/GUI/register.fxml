@@ -13,13 +13,12 @@
   <children>
     <Pane disable="false" focusTraversable="false" prefHeight="400.0" prefWidth="300.0" snapToPixel="true" style="-fx-background-color: #DE6F16;" visible="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
-        <TextField id="txtUsername" fx:id="txtEmail" layoutX="50.0" layoutY="200.0" prefWidth="200.0" promptText="Email" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;&#10;-fx-highlight-fill: #893d00;&#10;-fx-highlight-text-fill: #fff;" text="" />
-        <TextField fx:id="txtUsername" layoutX="50.0" layoutY="230.0" prefWidth="200.0" promptText="Username" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;" text="" />
-        <Button cancelButton="false" contentDisplay="CENTER" defaultButton="false" layoutX="150.0" layoutY="338.0" mnemonicParsing="false" onAction="#register" style="-fx-background-color: #893d00;&#10;-fx-background-radius: 0px;" styleClass="btnZoom" text="Register" textAlignment="CENTER" textFill="WHITE" textOverrun="ELLIPSIS" wrapText="false" />
-        <Button cancelButton="false" contentDisplay="CENTER" defaultButton="false" layoutX="89.0" layoutY="338.0" mnemonicParsing="false" onAction="#loginPage" style="-fx-background-color: #893d00;&#10;-fx-background-radius: 0px;" styleClass="btnZoom" text="Back" textAlignment="CENTER" textFill="WHITE" textOverrun="ELLIPSIS" wrapText="false" />
-        <PasswordField fx:id="txtPassword" layoutX="50.0" layoutY="261.0" prefWidth="200.0" promptText="Password" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;" />
-        <Label fx:id="lblSuccess" alignment="CENTER" layoutX="21.0" layoutY="294.0" minWidth="-Infinity" prefWidth="257.0" text="" textFill="#0c9900" />
-        <Label id="lblSuccess" fx:id="lblError" alignment="CENTER" layoutX="21.0" layoutY="294.0" prefWidth="257.0" text="" textFill="RED" />
+        <TextField id="txtUsername" fx:id="txtEmail" layoutX="50.0" layoutY="207.0" prefWidth="200.0" promptText="Email" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;&#10;-fx-highlight-fill: #893d00;&#10;-fx-highlight-text-fill: #fff;" text="" />
+        <Button cancelButton="false" contentDisplay="CENTER" defaultButton="false" layoutX="150.0" layoutY="324.0" mnemonicParsing="false" onAction="#register" style="-fx-background-color: #893d00;&#10;-fx-background-radius: 0px;" styleClass="btnZoom" text="Register" textAlignment="CENTER" textFill="WHITE" textOverrun="ELLIPSIS" wrapText="false" />
+        <Button cancelButton="false" contentDisplay="CENTER" defaultButton="false" layoutX="89.0" layoutY="324.0" mnemonicParsing="false" onAction="#loginPage" style="-fx-background-color: #893d00;&#10;-fx-background-radius: 0px;" styleClass="btnZoom" text="Back" textAlignment="CENTER" textFill="WHITE" textOverrun="ELLIPSIS" wrapText="false" />
+        <PasswordField fx:id="txtPassword" layoutX="50.0" layoutY="240.0" prefWidth="200.0" promptText="Password" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;" />
+        <Label fx:id="lblSuccess" alignment="CENTER" layoutX="22.0" layoutY="280.0" minWidth="-Infinity" prefWidth="257.0" text="" textFill="#0c9900" />
+        <Label id="lblSuccess" fx:id="lblError" alignment="CENTER" layoutX="22.0" layoutY="280.0" prefWidth="257.0" text="" textFill="RED" />
       </children>
     </Pane>
     <ImageView id="logo_white" fitWidth="257.0" layoutX="22.0" layoutY="43.0" pickOnBounds="true" preserveRatio="true">

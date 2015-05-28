@@ -20,9 +20,6 @@ public class RegisterController {
     private TextField txtEmail;
 
     @FXML
-    private TextField txtUsername;
-
-    @FXML
     private PasswordField txtPassword;
 
     @FXML
@@ -45,8 +42,12 @@ public class RegisterController {
 
     @FXML
     private void register(){
+        String result;
 
-        String result = Client.signup(txtUsername.getText(), txtPassword.getText());
+        if(!txtEmail.getText().equals("") && !txtPassword.getText().equals(""))
+            result = Client.signup(txtEmail.getText(), txtPassword.getText());
+        else
+            result = "required";
 
         if(result.equals("true")){
             lblError.setText("");
@@ -55,13 +56,16 @@ public class RegisterController {
         }else if(result.equals("false")){
             lblSuccess.setText("");
             lblError.setText("Username already exists.");
-            txtUsername.clear();
+            txtPassword.clear();
+            txtEmail.clear();
+        }else if(result.equals("required")){
+            lblSuccess.setText("");
+            lblError.setText("Both fields are required!");
             txtPassword.clear();
             txtEmail.clear();
         }else{
             lblSuccess.setText("");
             lblError.setText("Something went wrong. Please try again!");
-            txtUsername.clear();
             txtPassword.clear();
             txtEmail.clear();
         }

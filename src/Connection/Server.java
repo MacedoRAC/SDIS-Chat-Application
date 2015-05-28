@@ -190,10 +190,20 @@ public class Server {
 				os.close();
 				
 			} catch (IOException e) {
-				System.out.println("@Server:error sending response: "+e);
+				System.out.println("@Server:error sending response: " + e);
 				e.printStackTrace();
 			}
+
+			printDatabase();
 		}
+
+		private void printDatabase() {
+
+			for(int i = 0; i<users.size(); i++){
+				System.out.println(i + " " + users.get(i).getEmail() + " " + users.get(i).getUsername() + " " + users.get(i).getPassword());
+			}
+		}
+
 	}
 		
 	private static int findUser(String email)

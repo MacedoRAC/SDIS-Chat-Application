@@ -30,6 +30,9 @@ public class LoginController {
     private TextField txtUsername;
 
     @FXML
+    private TextField txtEmail;
+
+    @FXML
     private PasswordField txtPassword;
 
     @FXML
@@ -67,7 +70,7 @@ public class LoginController {
     @FXML
     private void signIn(){
 
-        String result = Client.login(txtUsername.getText(), txtPassword.getText());
+        String result = Client.login(txtEmail.getText(), txtUsername.getText(), txtPassword.getText());
 
 
         if(result.equals("true")){
@@ -75,14 +78,16 @@ public class LoginController {
             lblSuccess.setText("You're ready to go!");
         }else if(result.equals("false")){
             lblSuccess.setText("");
-            lblError.setText("No match with this Username and Password. Please try again!");
+            lblError.setText("Email and Password don't match!");
             txtUsername.clear();
             txtPassword.clear();
+            txtEmail.clear();
         }else{
             lblSuccess.setText("");
             lblError.setText("Something went wrong. Please try again!");
             txtUsername.clear();
             txtPassword.clear();
+            txtEmail.clear();
         }
     }
 
