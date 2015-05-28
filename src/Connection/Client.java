@@ -1,5 +1,7 @@
 package Connection;
 
+import GUI.Main;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,6 +16,7 @@ public class Client {
 	static String urlS;
 	private static OutputStreamWriter out;
 	private static BufferedReader in;
+	private static Main gui;
 	
 	/**
 	 * @param args
@@ -29,7 +32,11 @@ public class Client {
 		}
 
 		buildURL(args[0],Integer.parseInt(args[1]));
-		String ret;
+
+		gui = new Main();
+		String[]argsFX = new String[0];
+		gui.run(argsFX);
+		/*String ret;
 		System.out.println("@Client: trying to signup...");
 		ret = signup("Serkite","12345");
 		System.out.println("@Client: signup returned "+ret);
@@ -39,12 +46,14 @@ public class Client {
 		System.out.println("@Server: login returned "+ret);
 		System.out.println("@Client: trying to signup again...");
 		ret = signup("Serkite","ABCD");
-		System.out.println("@Client: signup returned "+ret);
+		System.out.println("@Client: signup returned "+ret);*/
         
 	}
 	
 	private static void buildURL(String address, int port)
 	{
+		address = "localhost";
+		port = 8000;
 		urlS = "http://"+address+":"+port+"/";
 	}
 	

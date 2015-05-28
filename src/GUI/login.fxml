@@ -24,8 +24,8 @@
         <PasswordField fx:id="txtPassword" layoutX="50.0" layoutY="271.0" prefWidth="200.0" promptText="Password" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;" />
         <Text fill="WHITE" fontSmoothingType="LCD" layoutX="99.0" layoutY="308.0" strikethrough="false" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="underline" text="Recover password" textAlignment="CENTER" underline="false" />
         <Button id="" fx:id="loginBtn" cancelButton="false" contentDisplay="CENTER" defaultButton="false" layoutX="122.0" layoutY="344.0" mnemonicParsing="false" onAction="#signIn" style="-fx-background-color: #893d00;&#10;-fx-background-radius: 0px;" styleClass="btnZoom" text="Login" textAlignment="CENTER" textFill="WHITE" textOverrun="ELLIPSIS" wrapText="false" />
-        <Label fx:id="lblSuccess" alignment="CENTER" layoutX="50.0" layoutY="320.0" prefWidth="200.0" text="" textFill="#0c9900" />
-        <Label id="lblSuccess" fx:id="lblError" alignment="CENTER" layoutX="50.0" layoutY="320.0" prefWidth="200.0" text="" textFill="RED" />
+        <Label fx:id="lblSuccess" alignment="CENTER" layoutX="22.0" layoutY="320.0" minWidth="-Infinity" prefWidth="257.0" text="" textFill="#0c9900" />
+        <Label id="lblSuccess" fx:id="lblError" alignment="CENTER" layoutX="22.0" layoutY="320.0" prefWidth="257.0" text="" textFill="RED" />
       </children>
     </Pane>
     <ImageView id="logo_white" fitWidth="257.0" layoutX="22.0" layoutY="43.0" pickOnBounds="true" preserveRatio="true">

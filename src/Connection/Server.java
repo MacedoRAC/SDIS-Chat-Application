@@ -41,7 +41,7 @@ public class Server {
 			e.printStackTrace();
 		}
 		
-		//entries.add( new Pair<String,String>("Serkite","12345"));
+		populateDatabase();
 		
 		server.createContext("/login", new LoginHandler());
 		server.createContext("/signup", new SignupHandler());

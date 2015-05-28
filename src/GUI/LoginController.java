@@ -67,9 +67,7 @@ public class LoginController {
     @FXML
     private void signIn(){
 
-        Client client = new Client();
-
-        String result = client.login(txtUsername.getText(), txtPassword.getText());
+        String result = Client.login(txtUsername.getText(), txtPassword.getText());
 
 
         if(result.equals("true")){

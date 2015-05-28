@@ -1,9 +1,13 @@
 package GUI;
 
+import Connection.Client;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 
 import java.io.IOException;
 
@@ -11,6 +15,21 @@ import java.io.IOException;
  * Created by André on 23/05/2015.
  */
 public class RegisterController {
+
+    @FXML
+    private TextField txtEmail;
+
+    @FXML
+    private TextField txtUsername;
+
+    @FXML
+    private PasswordField txtPassword;
+
+    @FXML
+    private Label lblSuccess;
+
+    @FXML
+    private Label lblError;
 
     @FXML
     private void loginPage(){
@@ -22,5 +41,23 @@ public class RegisterController {
         }
         Main.stage.setScene(new Scene(login, 290, 390));
         Main.stage.show();
+    }
+
+    @FXML
+    private void register(){
+
+        String result = Client.signup(txtUsername.getText(), txtPassword.getText());
+
+        if(result.equals("true")){
+            lblError.setText("");
+            lblSuccess.setText("You're ready to go!");
+            loginPage();
+        }else if(result.equals("false")){
+            lblSuccess.setText("");
+            lblError.setText("Username already exists.");
+        }else{
+            lblSuccess.setText("");
+            lblError.setText("Something went wrong. Please try again!");
+        }
     }
 }
