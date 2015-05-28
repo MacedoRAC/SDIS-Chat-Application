@@ -23,35 +23,35 @@ public class Client {
 	 */
 	public static void main(String[] args) {
 		
-		//DEBUGGIN ONLY - WHOLE MAIN METHOD TO BE REMOVED
-		if(args.length<2)
-		{
-			System.out.println("Usage: java Client <address> <port>");
-			//										0         1
-			return;
-		}
-
 		buildURL(args[0],Integer.parseInt(args[1]));
-
+		
 		gui = new Main();
 		String[]argsFX = new String[0];
 		gui.run(argsFX);
-		/*String ret;
+		/*
+		String ret;
 		System.out.println("@Client: trying to signup...");
-		ret = signup("Serkite","12345");
+		ret = signup("srkit@gmail.com","12345");
 		System.out.println("@Client: signup returned "+ret);
 		if(!ret.equals("true")) return;
-		System.out.println("@Client: trying to login...");
-		ret = login("Serkite","12345");
-		System.out.println("@Server: login returned "+ret);
+		System.out.println("@Client: trying to login with wrong password...");
+		ret = login("srkit@gmail.com", "srkit", "ABCD");
+		System.out.println("@Client: login returned "+ret);
+		if(!ret.equals("false")) return;
+		System.out.println("@Client: trying to login with right password...");
+		ret = login("srkit@gmail.com", "srkit", "12345");
+		System.out.println("@Client: login returned "+ret);
+		if(!ret.equals("true")) return;
 		System.out.println("@Client: trying to signup again...");
-		ret = signup("Serkite","ABCD");
-		System.out.println("@Client: signup returned "+ret);*/
+		ret = signup("srkit@gmail.com","ABCD");
+		System.out.println("@Client: signup returned "+ret);
+		*/
         
 	}
 	
 	private static void buildURL(String address, int port)
 	{
+		//DEBUGGING ONLY
 		address = "localhost";
 		port = 8000;
 		urlS = "http://"+address+":"+port+"/";
@@ -67,12 +67,12 @@ public class Client {
 	 * 		"false" -> caso já exista um utilizador com esse username
 	 * 		"error - ..." ->  caso haja um erro no request (vê os vários erros na Server.SignupHandler.handle)
 	 */
-	public static String signup(String username, String password)
+	public static String signup(String email, String password)
 	{
 		//BUILD URL
 		URL url = null;
 		try {
-			url = new URL(urlS+"signup?user="+username+"&?pass="+password);
+			url = new URL(urlS+"signup?email="+email+"&?pass="+password);
 		} catch (MalformedURLException e1) {
 			System.out.println("@Client:error initializing url");
 			e1.printStackTrace();
@@ -127,18 +127,18 @@ public class Client {
 	 * 		"false" -> caso não exista nenhum match com aquele username e password
 	 * 		"error - ..." ->  caso haja um erro no request (vê os vários erros na Server.LoginHandler.handle)
 	 */
-	public static String login(String username, String password)
+	public static String login(String email, String username, String password)
 	{
 		//BUILD URL
 		URL url = null;
 		try {
-			url = new URL(urlS+"login?user="+username+"&?pass="+password);
+			url = new URL(urlS+"login?email="+email+"&?user="+username+"&?pass="+password);
 		} catch (MalformedURLException e1) {
-			System.out.println("@Client:error initializing url");
+			System.out.println("@Client/login:error initializing url: "+e1);
 			e1.printStackTrace();
 			return "client error";
 		}
-		System.out.println("@Client:url initialized (\""+url+"\")");
+		System.out.println("@Client/login:url initialized (\""+url+"\")");
 		
 		//CONNECT AND SEND REQUEST
 		HttpURLConnection url_connect = null;
@@ -150,12 +150,12 @@ public class Client {
 			url_connect.connect();
 									
 		} catch (IOException e1) {
-			System.out.println("@Client:error connecting");
+			System.out.println("@Client/login:error connecting: "+e1);
 			e1.printStackTrace();
 			return "client error";
 		}
-		System.out.println("@Client:connected with request method \""+url_connect.getRequestMethod()+"\"");
-		System.out.println("@Client:request sent");
+		System.out.println("@Client/login:connected with request method \""+url_connect.getRequestMethod()+"\"");
+		System.out.println("@Client/login:request sent");
 		
 		//READ RESPONSE
 		String answer=null;
@@ -163,12 +163,12 @@ public class Client {
 			in  = new BufferedReader(new InputStreamReader(url_connect.getInputStream()));
 			answer = BufReaderToString();
 		} catch (IOException e) {
-			System.out.print("@Client:error reading response\n");
+			System.out.println("@Client/login:error reading response: "+e);
 			e.printStackTrace();
 			return "client error";
 		}
 		
-		System.out.print("@Client:response received\nDATA:"+answer.trim()+"\n");
+		System.out.println("@Client/login:response received\nDATA:"+answer.trim());
 		
 		return answer;
 	}
