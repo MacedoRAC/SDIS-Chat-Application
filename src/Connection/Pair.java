@@ -1,4 +1,4 @@
-package Logic;
+package Connection;
 
 public class Pair<A, B> {
     private A first;
