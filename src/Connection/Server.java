@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
+import Database.Database;
 import Database.User;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -18,7 +19,8 @@ import com.sun.net.httpserver.HttpServer;
 
 public class Server {
 
-	private static ArrayList<User> users = new ArrayList<User>();
+	//private static ArrayList<User> users = new ArrayList<User>();
+	private static Database users;
 	private static HttpServer server;
 	
 	/**
@@ -35,14 +37,15 @@ public class Server {
 				
 		int port = Integer.parseInt(args[1]);
 		
-		populateDatabase();
-		
 		try {
 			server =  HttpServer.create(new InetSocketAddress(InetAddress.getByName(args[0]),port), 0);		
 		} catch (IOException e) {
 			System.out.println("@Server:error creating server: "+e);
 			e.printStackTrace();
 		}
+
+		/* Create database - automatically populated */
+		users = new Database();
 		
 		server.createContext("/login", new LoginHandler());
 		server.createContext("/signup", new SignupHandler());
@@ -92,8 +95,8 @@ public class Server {
 					String user=query.substring(indU+"user=".length(),indP-2);
 					String pass=query.substring(indP+"pass=".length());
 					
-					int ind=findUser(email);
-					if(ind<0 || (ind>0 && !users.get(ind).getPassword().equals(pass)))
+
+					if(!findUser(email))
 					{
 						System.out.println("@Server/login:no match was found for that email-pass pair");
 						response="false";
@@ -101,7 +104,9 @@ public class Server {
 					}
 					else
 					{
-						users.get(ind).setUsername(user);
+						if(!user.equals("")) //if user doesn't put any username keeps the last one
+							users.getDb().get(email).setUsername(user);
+
 						System.out.println("@Server/login: email-pass pair matched");
 					}
 				}
@@ -160,11 +165,10 @@ public class Server {
 				{
 					String email=query.substring(indE+"email=".length(),indP-2);
 					String pass=query.substring(indP+"pass=".length());
-					
-					int ind=findUser(email);
-					if(ind<0)
+
+					if(!findUser(email))
 					{
-						users.add(new User(email,pass));
+						users.add(email, new User(email,pass));
 						System.out.println("@Server/signup:entry added");
 					}
 					else
@@ -193,26 +197,15 @@ public class Server {
 				System.out.println("@Server:error sending response: " + e);
 				e.printStackTrace();
 			}
-
-			printDatabase();
 		}
-
-		private void printDatabase() {
-
-			for(int i = 0; i<users.size(); i++){
-				System.out.println(i + " " + users.get(i).getEmail() + " " + users.get(i).getUsername() + " " + users.get(i).getPassword());
-			}
-		}
-
 	}
 		
-	private static int findUser(String email)
+	private static boolean findUser(String email)
 	{
-		for(int i=0;i<users.size();i++)
-		{
-			if(users.get(i).getEmail().equals(email)) return i;
-		}
-		return -1;
+		if(users.getDb().containsKey(email))
+			return true;
+		else
+			return false;
 	}
 	
 	private static String InStreamToString(InputStream is) {
@@ -243,14 +236,4 @@ public class Server {
 		return sb.toString();
  
 	}
-
-	private static void populateDatabase(){
-
-		users.add(new User("burn@simpsons.us","Burn", "1234"));
-		users.add(new User("homer@simpsons.us","Homer", "1234"));
-		users.add(new User("louis@simpsons.us","Louis", "1234"));
-		users.add(new User("bart@simpsons.us","Bart", "1234"));
-		users.add(new User("lisa@simpsons.us","Lisa", "1234"));
-	}
-
 }
