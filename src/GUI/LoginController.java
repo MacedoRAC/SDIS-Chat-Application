@@ -76,9 +76,13 @@ public class LoginController {
         }else if(result.equals("false")){
             lblSuccess.setText("");
             lblError.setText("No match with this Username and Password. Please try again!");
+            txtUsername.clear();
+            txtPassword.clear();
         }else{
             lblSuccess.setText("");
             lblError.setText("Something went wrong. Please try again!");
+            txtUsername.clear();
+            txtPassword.clear();
         }
     }
 

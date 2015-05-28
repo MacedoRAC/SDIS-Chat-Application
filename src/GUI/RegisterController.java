@@ -55,9 +55,15 @@ public class RegisterController {
         }else if(result.equals("false")){
             lblSuccess.setText("");
             lblError.setText("Username already exists.");
+            txtUsername.clear();
+            txtPassword.clear();
+            txtEmail.clear();
         }else{
             lblSuccess.setText("");
             lblError.setText("Something went wrong. Please try again!");
+            txtUsername.clear();
+            txtPassword.clear();
+            txtEmail.clear();
         }
     }
 }
