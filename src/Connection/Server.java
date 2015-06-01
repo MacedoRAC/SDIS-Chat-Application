@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 
 import Database.Database;
 import Database.User;
@@ -20,7 +19,7 @@ import com.sun.net.httpserver.HttpServer;
 public class Server {
 
 	//private static ArrayList<User> users = new ArrayList<User>();
-	private static Database users;
+	private static Database db;
 	private static HttpServer server;
 	
 	/**
@@ -45,7 +44,7 @@ public class Server {
 		}
 
 		/* Create database - automatically populated */
-		users = new Database();
+		db = new Database();
 		
 		server.createContext("/login", new LoginHandler());
 		server.createContext("/signup", new SignupHandler());
@@ -96,7 +95,7 @@ public class Server {
 					String pass=query.substring(indP+"pass=".length());
 					
 
-					if(!findUser(email))
+					if(!findUser(email) || !db.getUsers().get(email).getPassword().equals(pass))
 					{
 						System.out.println("@Server/login:no match was found for that email-pass pair");
 						response="false";
@@ -105,7 +104,7 @@ public class Server {
 					else
 					{
 						if(!user.equals("")) //if user doesn't put any username keeps the last one
-							users.getDb().get(email).setUsername(user);
+							db.getUsers().get(email).setUsername(user);
 
 						System.out.println("@Server/login: email-pass pair matched");
 					}
@@ -168,7 +167,7 @@ public class Server {
 
 					if(!findUser(email))
 					{
-						users.add(email, new User(email,pass));
+						db.add(email, new User(email,pass));
 						System.out.println("@Server/signup:entry added");
 					}
 					else
@@ -202,7 +201,7 @@ public class Server {
 		
 	private static boolean findUser(String email)
 	{
-		if(users.getDb().containsKey(email))
+		if(db.getUsers().containsKey(email))
 			return true;
 		else
 			return false;

@@ -23,7 +23,7 @@ public class Client {
 	 */
 	public static void main(String[] args) {
 		
-		buildURL(args[0],Integer.parseInt(args[1]));
+		buildURL("localhost",8000);
 		
 		gui = new Main();
 		String[]argsFX = new String[0];
@@ -51,9 +51,6 @@ public class Client {
 	
 	private static void buildURL(String address, int port)
 	{
-		//DEBUGGING ONLY
-		address = "localhost";
-		port = 8000;
 		urlS = "http://"+address+":"+port+"/";
 	}
 	

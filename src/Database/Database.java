@@ -7,44 +7,44 @@ import java.util.Hashtable;
  */
 public class Database {
 
-    private Hashtable<String, User> db;
+    private Hashtable<String, User> users;
 
 
     public Database(){
-        db = new Hashtable<>();
+        users = new Hashtable<>();
 
-        populateDatabase();
+        populateUsers();
     }
 
-    private void clearDatabase(){
-        db.clear();
+    private void clearUsers(){
+        users.clear();
     }
 
-    private void populateDatabase() {
+    private void populateUsers() {
 
-        db.put("burn@simpsons.us", new User("burn@simpsons.us", "Burn", "1234"));
-        db.put("homer@simpsons.us", new User("homer@simpsons.us","Homer", "1234"));
-        db.put("louis@simpsons.us", new User("louis@simpsons.us", "Louis", "1234"));
-        db.put("bart@simpsons.us", new User("bart@simpsons.us", "Bart", "1234"));
-        db.put("lisa@simpsons.us", new User("lisa@simpsons.us", "Lisa", "1234"));
+        users.put("burn@simpsons.us", new User("burn@simpsons.us", "Burn", "1234"));
+        users.put("homer@simpsons.us", new User("homer@simpsons.us","Homer", "1234"));
+        users.put("louis@simpsons.us", new User("louis@simpsons.us", "Louis", "1234"));
+        users.put("bart@simpsons.us", new User("bart@simpsons.us", "Bart", "1234"));
+        users.put("lisa@simpsons.us", new User("lisa@simpsons.us", "Lisa", "1234"));
     }
 
-    private void printDatabase() {
+    private void printUsers() {
 
-        System.out.println(db);
+        System.out.println(users);
     }
 
-    public Hashtable<String, User> getDb() {
-        return db;
+    public Hashtable<String, User> getUsers() {
+        return users;
     }
 
-    public void setDb(Hashtable<String, User> db) {
-        this.db = db;
+    public void setUsers(Hashtable<String, User> db) {
+        this.users = db;
     }
 
     public void add(String email, User user) {
-        db.put(email, user);
+        users.put(email, user);
 
-        printDatabase();
+        printUsers();
     }
 }
