@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 
 import Database.Database;
 import Database.User;
@@ -18,13 +19,11 @@ import com.sun.net.httpserver.HttpServer;
 
 public class Server {
 
-	//private static ArrayList<User> users = new ArrayList<User>();
 	private static Database db;
 	private static HttpServer server;
+	private static ArrayList<Request> activeReqs= new ArrayList<Request>();
+	//private static ArrayList<Request> inactiveReqs= new ArrayList<Request>(); //TODO inactive check request -> friend not online
 	
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 
 		if(args.length<2)
@@ -48,17 +47,122 @@ public class Server {
 		
 		server.createContext("/login", new LoginHandler());
 		server.createContext("/signup", new SignupHandler());
+		server.createContext("/friend", new FriendHandler());
 		server.setExecutor(null);
         server.start();
 	}
 	
-	static class LoginHandler implements HttpHandler {
+	public static class SignupHandler implements HttpHandler {
 		public void handle(HttpExchange request) {
-			System.out.println("@Server/login:request received");
+			Runnable thread = new SignupThread(request);
+			new Thread(thread).start();
+		}
+	}	
+	public static class LoginHandler implements HttpHandler {
+		public void handle(HttpExchange request) {
+			Runnable thread = new LoginThread(request);
+			new Thread(thread).start();
+		}	
+	}
+	public static class FriendHandler implements HttpHandler {
+		public void handle(HttpExchange request) {
+			Runnable thread = new FriendThread(request);
+			new Thread(thread).start();
+		}
+	}
+	
+	private static class SignupThread implements Runnable {
+		
+		private HttpExchange request;
+		
+		SignupThread(HttpExchange request)
+		{
+			this.request = request;
+		}
+
+		@Override
+		public void run() {
+			System.out.println("@Server/signup/#+"+Thread.currentThread().getId()+":request received");
 			String method = request.getRequestMethod();
-			System.out.println("Method:\""+method+"\"");
+			System.out.println("@Server/signup/#+"+Thread.currentThread().getId()+" Method:\""+method+"\"");
 			String query = request.getRequestURI().getQuery();
-			System.out.println("Query:\""+query+"\"");
+			System.out.println("@Server/signup/#+"+Thread.currentThread().getId()+" Query:\""+query+"\"");
+			
+			String response="true";
+			int code=200;
+			if(method.equals("PUT"))
+			{
+				int indE = query.indexOf("email=");
+				if(indE == -1)
+				{
+					System.out.println("@Server/signup/#+"+Thread.currentThread().getId()+":bad request received - can't find \"email=\"");
+					response="error - no valid email query";
+					code=400;
+				}
+								
+				int indP = query.indexOf("pass=");
+				if(indP == -1)
+				{
+					System.out.println("@Server/signup/#+"+Thread.currentThread().getId()+":bad request received - can't find \"pass=\"");
+					response="error - no valid pass query";
+					code=400;
+				}
+								
+				if(response.equals("true"))
+				{
+					String email=query.substring(indE+"email=".length(),indP-2);
+					String pass=query.substring(indP+"pass=".length());
+
+					if(!findUser(email))
+					{
+						db.add(email, new User(email,pass));
+						System.out.println("@Server/signup/#+"+Thread.currentThread().getId()+":entry added");
+					}
+					else
+					{
+						System.out.println("@Server/signup/#+"+Thread.currentThread().getId()+":email already in use");
+						response="false";
+						//code=403;
+					}
+				}
+			}
+			else
+			{
+				System.out.println("@Server/signup/#+"+Thread.currentThread().getId()+":bad request received - invalid method (\""+method+"\")");
+				response="error - invalid method";
+				code=400;
+			}
+			
+			try {
+				request.sendResponseHeaders(code, response.length());				
+				OutputStream os = request.getResponseBody();
+				os.write(response.getBytes());
+				System.out.println("@Server/signup/#+"+Thread.currentThread().getId()+":response sent \""+response+"\"");
+				os.close();
+				
+			} catch (IOException e) {
+				System.out.println("@Server/signup/#+"+Thread.currentThread().getId()+":error sending response: " + e);
+				e.printStackTrace();
+			}
+		}
+	}
+	private static class LoginThread implements Runnable {
+		
+		private HttpExchange request;
+		
+		LoginThread(HttpExchange request)
+		{
+			this.request = request;
+		}
+		
+		@Override
+		public void run() {
+
+			System.out.println("@Server/login/#+"+Thread.currentThread().getId()+":request received");
+			String method = request.getRequestMethod();
+			System.out.println("@Server/login/#+"+Thread.currentThread().getId()+" Method:\""+method+"\"");
+			String query = request.getRequestURI().getQuery();
+			System.out.println("@Server/login/#+"+Thread.currentThread().getId()+" Query:\""+query+"\"");
 			
 			String response="true";
 			int code=200;
@@ -67,7 +171,7 @@ public class Server {
 				int indE = query.indexOf("email=");
 				if(indE == -1)
 				{
-					System.out.println("@Server/login:bad request received - can't find \"email=\"");
+					System.out.println("@Server/login/#+"+Thread.currentThread().getId()+":bad request received - can't find \"email=\"");
 					response="error - no valid email query";
 					code=400;
 				}
@@ -75,7 +179,7 @@ public class Server {
 				int indU = query.indexOf("user=");
 				if(indU == -1)
 				{
-					System.out.println("@Server/login:bad request received - can't find \"user=\"");
+					System.out.println("@Server/login/#+"+Thread.currentThread().getId()+":bad request received - can't find \"user=\"");
 					response="error - no valid user query";
 					code=400;
 				}
@@ -83,7 +187,7 @@ public class Server {
 				int indP = query.indexOf("pass=");
 				if(indP == -1)
 				{
-					System.out.println("@Server/login:bad request received - can't find \"pass=\"");
+					System.out.println("@Server/login/#+"+Thread.currentThread().getId()+":bad request received - can't find \"pass=\"");
 					response="error - no valid pass query";
 					code=400;
 				}
@@ -97,7 +201,7 @@ public class Server {
 
 					if(!findUser(email) || !db.getUsers().get(email).getPassword().equals(pass))
 					{
-						System.out.println("@Server/login:no match was found for that email-pass pair");
+						System.out.println("@Server/login/#+"+Thread.currentThread().getId()+":no match was found for that email-pass pair");
 						response="false";
 						//code=404;
 					}
@@ -105,15 +209,17 @@ public class Server {
 					{
 						if(!user.equals("")) //if user doesn't put any username keeps the last one
 							db.getUsers().get(email).setUsername(user);
+						else
+							response+=" <username>"+db.getUsers().get(email).getUsername()+"</username>";
 
-						System.out.println("@Server/login: email-pass pair matched");
+						System.out.println("@Server/login/#+"+Thread.currentThread().getId()+": email-pass pair matched");
 					}
 				}
 				
 			}
 			else
 			{
-				System.out.println("@Server/login:bad request received - invalid method (\""+method+"\")");
+				System.out.println("@Server/login/#+"+Thread.currentThread().getId()+":bad request received - invalid method (\""+method+"\")");
 				response="error - invalid method";
 				code=400;
 			}
@@ -122,92 +228,246 @@ public class Server {
 				request.sendResponseHeaders(code, response.length());
 				OutputStream os = request.getResponseBody();
 				os.write(response.getBytes());
-				System.out.println("@Server/login:response sent \"" + response + "\"");
+				System.out.println("@Server/login/#+"+Thread.currentThread().getId()+":response sent \"" + response + "\"");
 				os.close();
 			} catch (IOException e) {
-				System.out.println("@Server/login:error sending response: "+e);
+				System.out.println("@Server/login/#+"+Thread.currentThread().getId()+":error sending response: "+e);
 				e.printStackTrace();
 			}
 		}
-			
-	}
-	
-	static class SignupHandler implements HttpHandler {
-		public void handle(HttpExchange request) {
-			System.out.println("@Server/signup:request received");
+		
+	}	
+	private static class FriendThread implements Runnable {
+		
+		private HttpExchange request;
+		
+		FriendThread(HttpExchange request)
+		{
+			this.request = request;
+		}
+
+		@Override
+		public void run() {
+			System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":request received");
 			String method = request.getRequestMethod();
-			System.out.println("Method:\""+method+"\"");
+			System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+" Method:\""+method+"\"");
 			String query = request.getRequestURI().getQuery();
-			System.out.println("Query:\""+query+"\"");
+			System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+" Query:\""+query+"\"");
 			
 			String response="true";
 			int code=200;
-			if(method.equals("PUT"))
+			
+			int indT = query.indexOf("type=");
+			if(indT == -1)
 			{
-				int indE = query.indexOf("email=");
-				if(indE == -1)
-				{
-					System.out.println("@Server/signup:bad request received - can't find \"email=\"");
-					response="error - no valid email query";
-					code=400;
-				}
-								
-				int indP = query.indexOf("pass=");
-				if(indP == -1)
-				{
-					System.out.println("@Server/signup:bad request received - can't find \"pass=\"");
-					response="error - no valid pass query";
-					code=400;
-				}
-								
-				if(response.equals("true"))
-				{
-					String email=query.substring(indE+"email=".length(),indP-2);
-					String pass=query.substring(indP+"pass=".length());
+				System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":bad request received - can't find \"type=\"");
+				response="error - no valid type query";
+				code=400;
+			}
+			
+			int indE = query.indexOf("email=");
+			if(indE == -1)
+			{
+				System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":bad request received - can't find \"email=\"");
+				response="error - no valid email query";
+				code=400;
+			}
+			
+			String type=query.substring(indT+"type=".length(), indE - 2);
+			String email=query.substring(indE+"email=".length());
+						
+			if(response.equals("true"))
+			{					
+				if(method.equals("PUT"))
+				{					
+					int indF = query.indexOf("friend=");
+					if (indF == -1)
+					{
+						System.out
+								.println("@Server/friend/#+"+Thread.currentThread().getId()+":bad request received - can't find \"friend=\"");
+						response = "error - no valid friend query";
+						code = 400;
+					}
+
+					email = query.substring(indE + "email=".length(), indF - 1);
+					String friend = query.substring(indF + "friend=".length());
 
 					if(!findUser(email))
 					{
-						db.add(email, new User(email,pass));
-						System.out.println("@Server/signup:entry added");
+						System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":bad request received - email not registered \""+email+"\"");
+						response="error - email not registered \""+email+"\"";
+						code=400;
 					}
+					
+					if(!findUser(friend))
+					{
+						System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":bad request received - friend not registered \""+friend+"\"");
+						response="error - friend not registered \""+friend+"\"";
+						code=400;
+					}
+					
+					if (type.equals("request"))
+					{
+						//ANSWER TO friend's CHECK REQUEST
+						int ind = findActRequest("check", friend, "");
+						if(ind>=0)
+						{
+							String response2="<request>\n";
+							response2+="<email>"+email+"</email>\n";
+							response2+="</request>\n";
+							
+							try {
+								HttpExchange request2 = activeReqs.get(ind).getRequest();
+								request2.sendResponseHeaders(200, response2.length());				
+								OutputStream os2 = request2.getResponseBody();
+								os2.write(response2.getBytes());
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent to "+friend+" \""+response2+"\"");
+								os2.close();
+								
+								request.sendResponseHeaders(200, response.length());				
+								OutputStream os = request.getResponseBody();
+								os.write(response.getBytes());
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent to "+email+" \""+response+"\"");
+								os.close();
+								
+								db.getUsers().get(friend).addFriendRequest(email);
+								
+							} catch (IOException e) {
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":error sending response");
+								e.printStackTrace();
+							}
+						}
+						else
+						{
+							//TODO inactive check request -> friend not online
+							System.out.println("@Server/friendRequest/#+"+Thread.currentThread().getId()+":can't find friend's check request (probably offline)");
+						}
+					}
+					else if (type.equals("accept"))
+					{
+						
+						if(!findUser(email))
+						{
+							System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":bad request received - email not registered \""+email+"\"");
+							response="error - email not registered \""+email+"\"";
+							code=400;
+						}
+						
+						//ANSWER TO friend's CHECK REQUEST
+						int ind = findActRequest("check", friend, "");
+						if(ind>=0)
+						{
+							String response2="<accept>\n";
+							response2+="<email>"+friend+"</email>\n";
+							response2+="</accept>\n";
+							
+							try {
+								if(findUser(email) && findUser(friend))
+								{
+									db.getUsers().get(email).addFriend(friend);
+									db.getUsers().get(email).remFriendRequest(friend);
+									db.getUsers().get(friend).addFriend(email);
+								}								
+								HttpExchange request2 = activeReqs.get(ind).getRequest();
+								request2.sendResponseHeaders(200, response2.length());				
+								OutputStream os2 = request2.getResponseBody();
+								os2.write(response2.getBytes());
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent to "+friend+" \""+response2+"\"");
+								os2.close();
+								activeReqs.remove(ind);
+								
+								request.sendResponseHeaders(200, response.length());				
+								OutputStream os = request.getResponseBody();
+								os.write(response.getBytes());
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent to "+email+" \""+response+"\"");
+								os.close();
+								
+								
+								
+							} catch (IOException e) {
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":error sending response: " + e);
+								e.printStackTrace();
+							}
+						}
+						else
+						{
+							//TODO inactive check request -> friend not online
+							System.out.println("@Server/friendAccept/#+"+Thread.currentThread().getId()+":can't find friend's check request (probably offline)");
+						}
+						
+					}/* TODO refuse request
+					else if (type.equals("refuse"))
+					{
+
+					}*/
 					else
 					{
-						System.out.println("@Server/signup:email already in use");
-						response="false";
-						//code=403;
+						System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":bad request received - invalid type");
+						response = "error - no valid type query";
+						code = 400;
 					}
+				}
+				else if(method.equals("GET"))
+				{				
+					if(type.startsWith("check"))
+					{
+						activeReqs.add(new Request("check",email,request));
+					}
+				}
+				else
+				{
+					System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":bad request received - invalid method (\""+method+"\")");
+					response="error - invalid method";
+					code=400;
 				}
 			}
 			else
 			{
-				System.out.println("@Server/signup:bad request received - invalid method (\""+method+"\")");
-				response="error - invalid method";
-				code=400;
-			}
-			
-			try {
-				request.sendResponseHeaders(code, response.length());				
-				OutputStream os = request.getResponseBody();
-				os.write(response.getBytes());
-				System.out.println("@Server:response sent \""+response+"\"");
-				os.close();
-				
-			} catch (IOException e) {
-				System.out.println("@Server:error sending response: " + e);
-				e.printStackTrace();
+				try {
+					request.sendResponseHeaders(code, response.length());				
+					OutputStream os = request.getResponseBody();
+					os.write(response.getBytes());
+					System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent \""+response+"\"");
+					os.close();
+					
+				} catch (IOException e) {
+					System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":error sending response: " + e);
+					e.printStackTrace();
+				}
 			}
 		}
 	}
-		
-	private static boolean findUser(String email)
+	
+	public static boolean findUser(String email)
 	{
-		if(db.getUsers().containsKey(email))
-			return true;
-		else
-			return false;
+		return db.getUsers().containsKey(email);
 	}
 	
-	private static String InStreamToString(InputStream is) {
+	public static int findActRequest(String type, String sender, String receiver) {
+		
+		for(int i=0;i<activeReqs.size();i++)
+		{
+			if(activeReqs.get(i).getType().equals(type)
+					&& activeReqs.get(i).getSender().equals(sender)
+					&& activeReqs.get(i).getReceiver().equals(receiver)
+					) return i;
+		}
+		return -1;
+	}
+	
+	/*public static int findInactRequest(String type, String sender, String receiver) {
+		
+		for(int i=0;i<inactiveReqs.size();i++)
+		{
+			if(inactiveReqs.get(i).getType().equals(type)
+					&& inactiveReqs.get(i).getSender().equals(sender)
+					&& inactiveReqs.get(i).getReceiver().equals(receiver)
+					) return i;
+		}
+		return -1;
+	}*/
+	
+	public static String InStreamToString(InputStream is) {
 		 
 		BufferedReader br = null;
 		StringBuilder sb = new StringBuilder();

@@ -1,19 +1,22 @@
 package Database;
 
+import java.util.ArrayList;
+
 public class User {
 	
 	private String email="";
 	private String username="";
 	private String password="";
+	private ArrayList<String> friends=new ArrayList<String>();
+	private ArrayList<String> friendRequests = new ArrayList<String>();
 	
-	public User(String email, String username, String password)
-	{
+	public User(){}
+	public User(String email, String username, String password) {
 		setEmail(email);
 		setUsername(username);
 		setPassword(password);
 	}
-	public User(String email, String password)
-	{
+	public User(String email, String password) {
 		setEmail(email);
 		setUsername(email);
 		setPassword(password);
@@ -29,6 +32,12 @@ public class User {
 	public String getPassword() {
 		return password;
 	}
+	public ArrayList<String> getFriends() {
+		return friends;
+	}
+	public ArrayList<String> getFriendRequests() {
+		return friendRequests;
+	}
 	
 	public void setEmail(String email) {
 		this.email = email;
@@ -38,6 +47,32 @@ public class User {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public void setFriends(ArrayList<String> contacts) {
+		this.friends = contacts;
+	}
+	public boolean addFriend(String email)
+	{
+		if(friends.contains(email)) return false;
+		friends.add(email);
+		return true;
+	}
+	public boolean remFriend(String email)
+	{
+		return friends.remove(email);
+	}
+	public void setFriendRequests(ArrayList<String> friendRequests) {
+		this.friendRequests = friendRequests;
+	}
+	public boolean addFriendRequest(String email)
+	{
+		if(friendRequests.contains(email)) return false;
+		friendRequests.add(email);
+		return true;
+	}
+	public boolean remFriendRequest(String email)
+	{
+		return friendRequests.remove(email);
 	}
 	
     @Override
@@ -50,5 +85,7 @@ public class User {
         User rhs = (User) obj;
         return this.getEmail().equals(rhs.getEmail());
     }
+
+
 	
 }

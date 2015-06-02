@@ -1,33 +1,39 @@
 package Connection;
 
+import Database.User;
 import GUI.Main;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+//import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Hashtable;
 
 
 public class Client {
 
-	static String urlS;
-	private static OutputStreamWriter out;
-	private static BufferedReader in;
-	private static Main gui;
+	private String urlS;
+	//private static OutputStreamWriter out;
+	//private static BufferedReader in;
+	private Hashtable<Long,String> threads = new Hashtable<Long,String>();
 	
-	/**
-	 * @param args
-	 */
+	private User user = new User();
+		
+	private Main gui;
+	
 	public static void main(String[] args) {
 		
-		buildURL("localhost",8000);
+		Client client = new Client();
 		
-		gui = new Main();
-		String[]argsFX = new String[0];
-		gui.run(argsFX);
+		client.buildURL("localhost",8000);
+		
+		//gui = new Main();
+		//String[]argsFX = new String[0];
+		//gui.run(argsFX);
+		
 		/*
 		String ret;
 		System.out.println("@Client: trying to signup...");
@@ -47,35 +53,84 @@ public class Client {
 		System.out.println("@Client: signup returned "+ret);
 		*/
         
+		String ret;
+		System.out.println("@Client: trying to login...");
+		if(args[0].equals("2"))
+		{
+			ret = client.login("burn@simpsons.us", "", "1234");
+			System.out.println("@Client: login returned "+ret+" username="+client.user.getUsername());
+			if(ret.startsWith("true"))
+			{
+				client.checkFriends();
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				client.sendFriend("homer@simpsons.us");
+				
+				try {
+					Thread.sleep(20000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println("@Client: friends["+client.user.getFriends().size()+"]="+client.user.getFriends().get(0));
+			}
+			else return;
+			
+						
+		}
+		else if(args[0].equals("3"))
+		{
+			ret = client.login("homer@simpsons.us", "", "1234");
+			System.out.println("@Client: login returned "+ret+" username="+client.user.getUsername());
+			if(ret.startsWith("true"))
+			{
+				client.checkFriends();
+				
+				try {
+					Thread.sleep(20000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println("@Client: friendRequests["+client.user.getFriendRequests().size()+"]="+client.user.getFriendRequests().get(0));				
+				
+				client.acceptFriend(client.user.getFriendRequests().get(0));
+				
+				try {
+					Thread.sleep(20000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				System.out.println("@Client: friends["+client.user.getFriends().size()+"]="+client.user.getFriends().get(0));
+			}
+		}
+		else System.out.println("wrong args! (2/3)\n");
+		
 	}
 	
-	private static void buildURL(String address, int port)
+	private void buildURL(String address, int port)
 	{
 		urlS = "http://"+address+":"+port+"/";
 	}
 	
-	/*
-	 * @params:
-	 * 		String username
-	 * 		String password
-	 * @return:
-	 * 		"client error" -> caso haja um erro da parte do cliente
-	 * 		"true" -> caso o signup tenha sido feito em condições
-	 * 		"false" -> caso já exista um utilizador com esse username
-	 * 		"error - ..." ->  caso haja um erro no request (vê os vários erros na Server.SignupHandler.handle)
-	 */
-	public static String signup(String email, String password)
+	public String signup(String email, String password)
 	{
 		//BUILD URL
 		URL url = null;
 		try {
 			url = new URL(urlS+"signup?email="+email+"&?pass="+password);
 		} catch (MalformedURLException e1) {
-			System.out.println("@Client:error initializing url");
+			System.out.println("@Client/signup:error initializing url");
 			e1.printStackTrace();
 			return "client error";
 		}
-		System.out.println("@Client:url initialized (\""+url+"\")");
+		System.out.println("@Client/signup:url initialized (\""+url+"\")");
 		
 		//CONNECT AND SEND REQUEST
 		HttpURLConnection url_connect = null;
@@ -87,51 +142,40 @@ public class Client {
 			url_connect.setReadTimeout(60*1000);
 			url_connect.connect();
 						
-			out = new OutputStreamWriter(url_connect.getOutputStream());
+			//out = new OutputStreamWriter(url_connect.getOutputStream());
 			
 		} catch (IOException e1) {
-			System.out.println("@Client:error connecting");
+			System.out.println("@Client/signup:error connecting");
 			e1.printStackTrace();
 			return "client error";
 		}
-		System.out.println("@Client:connected with request method \""+url_connect.getRequestMethod()+"\"");
-		System.out.println("@Client:request sent");
+		System.out.println("@Client/signup:connected with request method \""+url_connect.getRequestMethod()+"\"");
+		System.out.println("@Client/signup:request sent");
 		
 		//READ RESPONSE
 		String answer = null;
 		try {
-			in = new BufferedReader(new InputStreamReader(
+			BufferedReader in = new BufferedReader(new InputStreamReader(
 					url_connect.getInputStream()));
-			answer = BufReaderToString();
+			answer = BufReaderToString(in);
 		} catch (IOException e) {
-			System.out.println("@Client:error reading response");
+			System.out.println("@Client/signup:error reading response");
 			e.printStackTrace();
 			return "client error";
 		}
 
-		System.out.println("@Client:response received\nDATA:" + answer.trim());
+		System.out.println("@Client/signup:response received\nDATA:" + answer.trim());
 
 		return answer;
 	}
-
-	/*
-	 * @params:
-	 * 		String username
-	 * 		String password
-	 * @return:
-	 * 		"client error" -> caso haja um erro da parte do cliente
-	 * 		"true" -> caso o login tenha sido feito em condições
-	 * 		"false" -> caso não exista nenhum match com aquele username e password
-	 * 		"error - ..." ->  caso haja um erro no request (vê os vários erros na Server.LoginHandler.handle)
-	 */
-	public static String login(String email, String username, String password)
+	public String login(String email, String username, String password)
 	{
 		//BUILD URL
 		URL url = null;
 		try {
 			url = new URL(urlS+"login?email="+email+"&?user="+username+"&?pass="+password);
 		} catch (MalformedURLException e1) {
-			System.out.println("@Client/login:error initializing url: "+e1);
+			System.out.println("@Client/login:error initializing url");
 			e1.printStackTrace();
 			return "client error";
 		}
@@ -147,7 +191,7 @@ public class Client {
 			url_connect.connect();
 									
 		} catch (IOException e1) {
-			System.out.println("@Client/login:error connecting: "+e1);
+			System.out.println("@Client/login:error connecting");
 			e1.printStackTrace();
 			return "client error";
 		}
@@ -157,20 +201,273 @@ public class Client {
 		//READ RESPONSE
 		String answer=null;
 		try {
-			in  = new BufferedReader(new InputStreamReader(url_connect.getInputStream()));
-			answer = BufReaderToString();
+			BufferedReader in  = new BufferedReader(new InputStreamReader(url_connect.getInputStream()));
+			answer = BufReaderToString(in);
 		} catch (IOException e) {
-			System.out.println("@Client/login:error reading response: "+e);
+			System.out.println("@Client/login:error reading response");
 			e.printStackTrace();
 			return "client error";
 		}
 		
 		System.out.println("@Client/login:response received\nDATA:"+answer.trim());
+		if(answer.startsWith("true"))
+		{
+			user.setEmail(email);
+			if(username.equals(""))
+			{
+				int indUB = answer.indexOf("<username>");
+				int indUE = answer.indexOf("</username>");
+				if(indUB==-1 || indUE==-1)
+				{
+					System.out.println("@Client/login:bad response received - can't find \"<username>\" or \"</username>\" tags in body");
+					return answer;
+				}
+				else
+				{
+					username = answer.substring(indUB+"<username>".length(),indUE);
+					
+				}
+			}
+			user.setUsername(username);
+		}
 		
-		return answer;
+		return answer;			
+		
+	}	
+	public void checkFriends()
+	{
+		Runnable r = new CheckFriendsThread();
+		Thread t = new Thread(r);
+		t.setName("check_friends");
+		t.start();
+	}	
+	public void sendFriend(String email)
+	{
+		Runnable r = new SendFriendThread(email);
+		Thread t = new Thread(r);
+		t.setName("sendFriend");
+		t.start();
+	}
+	public void acceptFriend(String email)
+	{
+		Runnable r = new AcceptFriendThread(email);
+		Thread t = new Thread(r);
+		t.setName("acceptFriend");
+		t.start();
 	}
 	
-	public static String BufReaderToString() throws IOException {
+	private class CheckFriendsThread implements Runnable {
+
+		@Override
+		public void run() {
+			// BUILD URL
+			URL url = null;
+			try {
+				url = new URL(urlS + "friend?type=check&?email=" + user.getEmail());
+			} catch (MalformedURLException e1) {
+				System.out.println("@Client/check_friend/#+"+Thread.currentThread().getId()+":error initializing url");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/check_friend:url initialized (\"" + url + "\")");		
+			
+			//CONNECT AND SEND REQUEST
+			HttpURLConnection url_connect = null;
+			try {
+				url_connect = (HttpURLConnection) url.openConnection();
+				
+				url_connect.setRequestMethod("GET");
+				url_connect.setReadTimeout(0);
+				url_connect.connect();
+										
+			} catch (IOException e1) {
+				System.out.println("@Client/check_friend/#+"+Thread.currentThread().getId()+":error connecting");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/check_friend/#+"+Thread.currentThread().getId()+":connected with request method \""+url_connect.getRequestMethod()+"\"");
+			System.out.println("@Client/check_friend/#+"+Thread.currentThread().getId()+":request sent");
+			
+			//READ RESPONSE
+			String answer=null;
+			try {
+				BufferedReader in  = new BufferedReader(new InputStreamReader(url_connect.getInputStream()));
+				answer = BufReaderToString(in);
+			} catch (IOException e) {
+				System.out.println("@Client/check_friend/#+"+Thread.currentThread().getId()+":error reading response");
+				e.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			
+			System.out.println("@Client/check_friend/#+"+Thread.currentThread().getId()+":response received\nDATA:"+answer.trim());
+			
+			int indEB = answer.indexOf("<email>");
+			int indEE = answer.indexOf("</email>");
+			if(indEB==-1 || indEE==-1)
+			{
+				System.out.println("@Client/check_friend/#+"+Thread.currentThread().getId()+":bad response received - can't find \"<email>\" or \"</email>\" tags in body");
+				threads.put(Thread.currentThread().getId(), answer);
+				return;
+			}
+			
+			String email = answer.substring(indEB+"<email>".length(),indEE);
+			
+			if(answer.startsWith("<request>") && answer.endsWith("</request>"))
+			{
+				user.addFriendRequest(email);
+				threads.put(Thread.currentThread().getId(), "request received: "+email);
+			}
+			else if(answer.startsWith("<accept>") && answer.endsWith("</accept>"))
+			{
+				user.addFriend(email);
+				user.remFriendRequest(email);
+				threads.put(Thread.currentThread().getId(), "friend added: "+email);
+			}
+			else
+			{
+				System.out.println("@Client/check_friend/#+"+Thread.currentThread().getId()+":bad response received - can't find \"<request>\", \"</request>\" or \"<accept>\", \"</accept>\" tags in body");
+				threads.put(Thread.currentThread().getId(), "server error");
+				return;
+			}
+		}	
+	}
+	private class SendFriendThread implements Runnable {
+		
+		private String email;
+		
+		public SendFriendThread(String email)
+		{
+			this.email=email;
+		}
+
+		@Override
+		public void run() {
+			// BUILD URL
+			URL url = null;
+			try {
+				url = new URL(urlS + "friend?type=request&?email=" + user.getEmail() + "&friend="+email);
+			} catch (MalformedURLException e1) {
+				System.out.println("@Client/send_friend/#+"+Thread.currentThread().getId()+":error initializing url");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/send_friend/#+"+Thread.currentThread().getId()+":url initialized (\"" + url + "\")");
+			
+			//CONNECT AND SEND REQUEST
+			HttpURLConnection url_connect = null;
+			try {
+				url_connect = (HttpURLConnection) url.openConnection();
+				
+				url_connect.setRequestMethod("PUT");
+				url_connect.setReadTimeout(60*1000);
+				url_connect.connect();
+										
+			} catch (IOException e1) {
+				System.out.println("@Client/send_friend/#+"+Thread.currentThread().getId()+":error connecting");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/send_friend/#+"+Thread.currentThread().getId()+":connected with request method \""+url_connect.getRequestMethod()+"\"");
+			System.out.println("@Client/send_friend/#+"+Thread.currentThread().getId()+":request sent");
+				
+			//READ RESPONSE
+			String answer = null;
+			try {
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						url_connect.getInputStream()));
+				answer = BufReaderToString(in);
+			} catch (IOException e) {
+				System.out.println("@Client/send_friend/#+"+Thread.currentThread().getId()+":error reading response");
+				e.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+
+			System.out.println("@Client/send_friend/#+"+Thread.currentThread().getId()+":response received\nDATA:"
+					+ answer.trim());
+			
+			threads.put(Thread.currentThread().getId(), answer);
+		}
+	}
+	private class AcceptFriendThread implements Runnable {
+		
+		private String email;
+		
+		public AcceptFriendThread(String email)
+		{
+			this.email=email;
+		}
+
+		
+		@Override
+		public void run() {
+			
+			if(!user.getFriendRequests().contains(email))
+			{
+				System.out.println("@Client/accept_friend/#+"+Thread.currentThread().getId()+":error - can't find this friend request");
+				threads.put(Thread.currentThread().getId(), "client error - no friend request");
+				return;
+			}
+			
+			// BUILD URL
+			URL url = null;
+			try {
+				url = new URL(urlS + "friend?type=accept&?email=" + user.getEmail() + "&friend="+email);
+			} catch (MalformedURLException e1) {
+				System.out.println("@Client/accept_friend/#+"+Thread.currentThread().getId()+":error initializing url");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/accept_friend/#+"+Thread.currentThread().getId()+":url initialized (\"" + url + "\")");
+			
+			//CONNECT AND SEND REQUEST
+			HttpURLConnection url_connect = null;
+			try {
+				url_connect = (HttpURLConnection) url.openConnection();
+				
+				url_connect.setRequestMethod("PUT");
+				url_connect.setReadTimeout(60*1000);
+				url_connect.connect();
+										
+			} catch (IOException e1) {
+				System.out.println("@Client/accept_friend/#+"+Thread.currentThread().getId()+":error connecting");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/accept_friend/#+"+Thread.currentThread().getId()+":connected with request method \""+url_connect.getRequestMethod()+"\"");
+			System.out.println("@Client/accept_friend/#+"+Thread.currentThread().getId()+":request sent");
+			
+			//READ RESPONSE
+			String answer = null;
+			try {
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						url_connect.getInputStream()));
+				answer = BufReaderToString(in);
+			} catch (IOException e) {
+				System.out.println("@Client/accept_friend/#+"+Thread.currentThread().getId()+":error reading response");
+				e.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+
+			System.out.println("@Client/accept_friend/#+"+Thread.currentThread().getId()+":response received\nDATA:"
+					+ answer.trim());
+			
+			user.remFriendRequest(email);
+			user.addFriend(email);
+			
+			threads.put(Thread.currentThread().getId(), answer);
+		}
+	}
+	
+ 	public String BufReaderToString(BufferedReader in) throws IOException {
 		StringBuilder stringBuilder = new StringBuilder();
 		 
 	      String line = null;
