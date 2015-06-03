@@ -22,7 +22,6 @@ public class Server {
 	private static Database db;
 	private static HttpServer server;
 	private static ArrayList<Request> activeReqs= new ArrayList<Request>();
-	//private static ArrayList<Request> inactiveReqs= new ArrayList<Request>(); //TODO inactive check request -> friend not online
 	
 	public static void main(String[] args) {
 
@@ -278,7 +277,7 @@ public class Server {
 						
 			if(response.equals("true"))
 			{					
-				if(method.equals("PUT"))
+				if(method.equals("PUT") || method.equals("DELETE"))
 				{					
 					int indF = query.indexOf("friend=");
 					if (indF == -1)
@@ -306,7 +305,7 @@ public class Server {
 						code=400;
 					}
 					
-					if (type.equals("request"))
+					if (type.equals("request") && method.equals("PUT"))
 					{
 						//ANSWER TO friend's CHECK REQUEST
 						int ind = findActRequest("check", friend, "");
@@ -339,20 +338,12 @@ public class Server {
 						}
 						else
 						{
-							//TODO inactive check request -> friend not online
-							System.out.println("@Server/friendRequest/#+"+Thread.currentThread().getId()+":can't find friend's check request (probably offline)");
+							System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":can't find friend's check request (probably offline)");
 						}
 					}
-					else if (type.equals("accept"))
+					else if (type.equals("accept") && method.equals("PUT"))
 					{
-						
-						if(!findUser(email))
-						{
-							System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":bad request received - email not registered \""+email+"\"");
-							response="error - email not registered \""+email+"\"";
-							code=400;
-						}
-						
+	
 						//ANSWER TO friend's CHECK REQUEST
 						int ind = findActRequest("check", friend, "");
 						if(ind>=0)
@@ -391,15 +382,54 @@ public class Server {
 						}
 						else
 						{
-							//TODO inactive check request -> friend not online
-							System.out.println("@Server/friendAccept/#+"+Thread.currentThread().getId()+":can't find friend's check request (probably offline)");
+							System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":can't find friend's check request (probably offline)");
 						}
 						
 					}/* TODO refuse request
-					else if (type.equals("refuse"))
+					else if (type.equals("refuse") && method.equals("PUT"))
 					{
 
 					}*/
+					else if(type.equals("remove") && method.equals("DELETE"))
+					{
+						//ANSWER TO friend's CHECK REQUEST
+						int ind = findActRequest("check", friend, "");
+						if(ind>=0)
+						{
+							String response2="<remove>\n";
+							response2+="<email>"+friend+"</email>\n";
+							response2+="</remove>\n";
+							
+							try {
+								if(findUser(email) && findUser(friend))
+								{
+									db.getUsers().get(email).remFriend(friend);
+									db.getUsers().get(friend).remFriend(email);
+								}								
+								HttpExchange request2 = activeReqs.get(ind).getRequest();
+								request2.sendResponseHeaders(200, response2.length());				
+								OutputStream os2 = request2.getResponseBody();
+								os2.write(response2.getBytes());
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent to "+friend+" \""+response2+"\"");
+								os2.close();
+								activeReqs.remove(ind);
+								
+								request.sendResponseHeaders(200, response.length());				
+								OutputStream os = request.getResponseBody();
+								os.write(response.getBytes());
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent to "+email+" \""+response+"\"");
+								os.close();
+																
+							} catch (IOException e) {
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":error sending response: " + e);
+								e.printStackTrace();
+							}
+						}
+						else
+						{
+							System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":can't find friend's check request (probably offline)");
+						}
+					}
 					else
 					{
 						System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":bad request received - invalid type");
@@ -409,7 +439,7 @@ public class Server {
 				}
 				else if(method.equals("GET"))
 				{				
-					if(type.startsWith("check"))
+					if(type.startsWith("check"))//TODO use equals instead of startsWith
 					{
 						activeReqs.add(new Request("check",email,request));
 					}
@@ -454,19 +484,7 @@ public class Server {
 		}
 		return -1;
 	}
-	
-	/*public static int findInactRequest(String type, String sender, String receiver) {
 		
-		for(int i=0;i<inactiveReqs.size();i++)
-		{
-			if(inactiveReqs.get(i).getType().equals(type)
-					&& inactiveReqs.get(i).getSender().equals(sender)
-					&& inactiveReqs.get(i).getReceiver().equals(receiver)
-					) return i;
-		}
-		return -1;
-	}*/
-	
 	public static String InStreamToString(InputStream is) {
 		 
 		BufferedReader br = null;
