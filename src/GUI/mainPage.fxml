@@ -27,12 +27,12 @@
     </Pane>
     <Pane layoutX="0.0" layoutY="505.0" prefHeight="50.0" prefWidth="342.0" style="-fx-background-color: #DE6F16;">
       <children>
-        <Button fx:id="addFriendBtn" contentDisplay="CENTER" layoutX="83.0" layoutY="15.0" mnemonicParsing="false" style="-fx-background-color: #893d00;&#10;-fx-background-radius: 0px;" styleClass="btnZoom" text="Add Friend" textAlignment="CENTER" textFill="WHITE">
+        <Button fx:id="addFriendBtn" contentDisplay="CENTER" layoutX="83.0" layoutY="15.0" mnemonicParsing="false" onAction="#openAddFriendPage" style="-fx-background-color: #893d00;&#10;-fx-background-radius: 0px;" styleClass="btnZoom" text="Add Friend" textAlignment="CENTER" textFill="WHITE">
           <stylesheets>
             <URL value="@style.css" />
           </stylesheets>
         </Button>
-        <Button fx:id="logoutBtn" contentDisplay="CENTER" layoutX="201.0" layoutY="15.0" mnemonicParsing="false" style="-fx-background-color: #893d00;&#10;-fx-background-radius: 0px;" styleClass="btnZoom" text="Logout" textAlignment="CENTER" textFill="WHITE">
+        <Button fx:id="logoutBtn" contentDisplay="CENTER" layoutX="201.0" layoutY="15.0" mnemonicParsing="false" onAction="#logout" style="-fx-background-color: #893d00;&#10;-fx-background-radius: 0px;" styleClass="btnZoom" text="Logout" textAlignment="CENTER" textFill="WHITE">
           <stylesheets>
             <URL value="@style.css" />
           </stylesheets>
