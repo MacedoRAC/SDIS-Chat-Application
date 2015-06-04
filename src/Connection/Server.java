@@ -385,11 +385,45 @@ public class Server {
 							System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":can't find friend's check request (probably offline)");
 						}
 						
-					}/* TODO refuse request
+					}
 					else if (type.equals("refuse") && method.equals("PUT"))
 					{
-
-					}*/
+						int ind = findActRequest("check", friend, "");
+						if(ind>=0)
+						{
+							String response2="<refuse>\n";
+							response2+="<email>"+friend+"</email>\n";
+							response2+="</refuse>\n";
+							
+							if(findUser(email) && findUser(friend)) 
+							{
+								db.getUsers().get(email).remFriendRequest(friend);
+							}
+							
+							HttpExchange request2 = activeReqs.get(ind).getRequest();
+							try {
+								request2.sendResponseHeaders(200, response2.length());
+								OutputStream os2 = request2.getResponseBody();
+								os2.write(response2.getBytes());
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent to "+friend+" \""+response2+"\"");
+								os2.close();
+								activeReqs.remove(ind);
+								
+								request.sendResponseHeaders(200, response.length());				
+								OutputStream os = request.getResponseBody();
+								os.write(response.getBytes());
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent to "+email+" \""+response+"\"");
+								os.close();
+							} catch (IOException e) {
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":error sending response: " + e);
+								e.printStackTrace();
+							}				
+						}
+						else
+						{
+							System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":can't find friend's check request (probably offline)");
+						}
+					}
 					else if(type.equals("remove") && method.equals("DELETE"))
 					{
 						//ANSWER TO friend's CHECK REQUEST

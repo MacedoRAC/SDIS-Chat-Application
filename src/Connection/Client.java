@@ -11,18 +11,19 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.Scanner;
 
 
 public class Client {
 
-	private static String urlS;
+	private String urlS;
 	//private static OutputStreamWriter out;
 	//private static BufferedReader in;
 	private Hashtable<Long,String> threads = new Hashtable<Long,String>();
 	
-	private static User user = new User();
+	private User user = new User();
 		
-	private static Main gui;
+	private Main gui;
 	
 	public static void main(String[] args) {
 		
@@ -30,11 +31,11 @@ public class Client {
 		
 		client.buildURL("localhost",8000);
 		
-		gui = new Main();
-		String[]argsFX = new String[0];
-		gui.run(argsFX);
+		//gui = new Main();
+		//String[]argsFX = new String[0];
+		//gui.run(argsFX);
 		
-		/*
+		/* //SIGNUP AND LOGIN TEST
 		String ret;
 		System.out.println("@Client: trying to signup...");
 		ret = signup("srkit@gmail.com","12345");
@@ -53,45 +54,42 @@ public class Client {
 		System.out.println("@Client: signup returned "+ret);
 		*/
         
+		// FRIENDS TEST
+		
+		Scanner keyboard = new Scanner(System.in);
+		
 		String ret;
 		System.out.println("@Client: trying to login...");
-		if(args[0].equals("2"))
+		if(args.length==1 && args[0].equals("2"))
 		{
 			ret = client.login("burn@simpsons.us", "", "1234");
 			System.out.println("@Client: login returned "+ret+" username="+client.user.getUsername());
 			if(ret.startsWith("true"))
 			{
 				client.checkFriends();
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				
+				System.out.println("@Client: NEXTUP: sendFriend");
+				keyboard.next();
+				
 				client.sendFriend("homer@simpsons.us");
 				
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				System.out.println("@Client: friends["+client.user.getFriends().size()+"]="+client.user.getFriends().get(0));
+				//System.out.println("@Client: NEXTUP: print friends - expecting 1");
+				System.out.println("@Client: NEXTUP: print friends - expecting 0");
+				keyboard.next();
 				
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
+				//System.out.println("@Client: friends["+client.user.getFriends().size()+"]="+client.user.getFriends().get(0));
 				System.out.println("@Client: friends["+client.user.getFriends().size()+"]");
+				
+				/*System.out.println("@Client: NEXTUP: print friends - expecting 0");
+				keyboard.next();
+				
+				System.out.println("@Client: friends["+client.user.getFriends().size()+"]");*/
 			}
 			else return;
 			
 						
 		}
-		else if(args[0].equals("3"))
+		else if(args.length==1 && args[0].equals("3"))
 		{
 			ret = client.login("homer@simpsons.us", "", "1234");
 			System.out.println("@Client: login returned "+ret+" username="+client.user.getUsername());
@@ -99,34 +97,30 @@ public class Client {
 			{
 				client.checkFriends();
 				
-				try {
-					Thread.sleep(6000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				System.out.println("@Client: friendRequests["+client.user.getFriendRequests().size()+"]="+client.user.getFriendRequests().get(0));				
+				System.out.println("@Client: NEXTUP: print friendRequests - expecting 0 & refuseFriend");
+				keyboard.next();
 				
-				client.acceptFriend(client.user.getFriendRequests().get(0));
+				System.out.println("@Client: friendRequests["+client.user.getFriendRequests().size()+"]");				
 				
-				try {
-					Thread.sleep(6000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				//client.acceptFriend(client.user.getFriendRequests().get(0));
+				client.refuseFriend(client.user.getFriendRequests().get(0));
 				
-				System.out.println("@Client: friends["+client.user.getFriends().size()+"]="+client.user.getFriends().get(0));
+				//System.out.println("@Client: NEXTUP: print friends - expecting 1 & removeFriend");
+				System.out.println("@Client: NEXTUP: print friends & friendRequests - expecting 0");
+				keyboard.next();
 				
-				client.removeFriend(client.user.getFriends().get(0));
-				
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				//System.out.println("@Client: friends["+client.user.getFriends().size()+"]="+client.user.getFriends().get(0));
 				System.out.println("@Client: friends["+client.user.getFriends().size()+"]");
+				System.out.println("@Client: friendRequests["+client.user.getFriends().size()+"]");
+				
+				/*client.removeFriend(client.user.getFriends().get(0));
+				
+				System.out.println("@Client: NEXTUP: print friends - expecting 0");
+				keyboard.next();
+				
+				System.out.println("@Client: friends["+client.user.getFriends().size()+"]");
+				*/
+				
 			}
 		}
 		else System.out.println("wrong args! (2/3)\n");
@@ -138,7 +132,7 @@ public class Client {
 		urlS = "http://"+address+":"+port+"/";
 	}
 	
-	public static String signup(String email, String password)
+	public String signup(String email, String password)
 	{
 		//BUILD URL
 		URL url = null;
@@ -187,7 +181,7 @@ public class Client {
 
 		return answer;
 	}
-	public static String login(String email, String username, String password)
+	public String login(String email, String username, String password)
 	{
 		//BUILD URL
 		URL url = null;
@@ -281,11 +275,20 @@ public class Client {
 		t.setName("removeFriend");
 		t.start();
 	}
+	public void refuseFriend(String email) {
+		Runnable r = new RefuseFriendThread(email);
+		Thread t = new Thread(r);
+		t.setName("refuseFriend");
+		t.start();
+	}
 	
 	private class CheckFriendsThread implements Runnable {
 
 		@Override
 		public void run() {
+			
+			threads.put(Thread.currentThread().getId(), "");
+			
 			// BUILD URL
 			URL url = null;
 			try {
@@ -357,6 +360,11 @@ public class Client {
 				user.remFriend(email);
 				threads.put(Thread.currentThread().getId(), "friend removed: "+email);
 			}
+			else if(answer.startsWith("<refuse>") && answer.endsWith("</refuse>"))
+			{
+				user.remFriend(email);
+				threads.put(Thread.currentThread().getId(), "friend refused: "+email);
+			}
 			else
 			{
 				System.out.println("@Client/check_friend/#+"+Thread.currentThread().getId()+":bad response received - can't find \"<request>\", \"</request>\" or \"<accept>\", \"</accept>\" tags in body");
@@ -377,6 +385,13 @@ public class Client {
 
 		@Override
 		public void run() {
+			
+			if(user.getFriends().contains(email))
+			{
+				threads.put(Thread.currentThread().getId(), "client error - friend already exists");
+				return;
+			}
+			
 			// BUILD URL
 			URL url = null;
 			try {
@@ -568,8 +583,78 @@ public class Client {
 			
 		}		
 	}
+	private class RefuseFriendThread implements Runnable {
+		private String email;
+		
+		public RefuseFriendThread(String email) {
+			this.email=email;
+		}
+		
+		
+		@Override
+ 		public void run() {
+			if(!user.getFriendRequests().contains(email)) {
+				//ERRO
+				System.out.println("@Client/refuse_friend/#+"+Thread.currentThread().getId()+":error - can't find this friend request");
+				threads.put(Thread.currentThread().getId(), "client error - no friend request found");
+				return;
+			}
+			
+			//URL
+			URL url = null;
+			try {
+				url = new URL(urlS + "friend?type=refuse&?email=" + user.getEmail() + "&friend="+email);
+			} catch (MalformedURLException e) {
+				System.out.println("@Client/refuse_friend/#+"+Thread.currentThread().getId()+":error initializing url");
+				e.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/refuse_friend/#+"+Thread.currentThread().getId()+":url initialized (\"" + url + "\")");
+			
+			//CONNECTION 
+			HttpURLConnection url_connect = null;
+			
+			try {
+				url_connect = (HttpURLConnection) url.openConnection();
+				
+				url_connect.setRequestMethod("PUT");
+				url_connect.setReadTimeout(60*1000);
+				url_connect.connect();
+			} catch (IOException e) {
+				System.out.println("@Client/refuse_friend/#+"+Thread.currentThread().getId()+":error connecting");
+				e.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			
+			System.out.println("@Client/refuse_friend/#+"+Thread.currentThread().getId()+":connected with request method \""+url_connect.getRequestMethod()+"\"");
+			System.out.println("@Client/refuse_friend/#+"+Thread.currentThread().getId()+":request sent");
+			
+			//RESPONSE
+			String answer=null;
+			try {
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						url_connect.getInputStream()));
+				answer = BufReaderToString(in);
+			} catch (IOException e) {
+				System.out.println("@Client/refuse_friend/#+"+Thread.currentThread().getId()+":error reading response");
+				e.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			
+			System.out.println("@Client/refuse_friend/#+"+Thread.currentThread().getId()+":response received\nDATA:"
+					+ answer.trim());
+			
+			user.remFriendRequest(email);
+			
+			threads.put(Thread.currentThread().getId(), answer);
+		}
+		
+	}
 	
- 	public static String BufReaderToString(BufferedReader in) throws IOException {
+ 	public String BufReaderToString(BufferedReader in) throws IOException {
 		StringBuilder stringBuilder = new StringBuilder();
 		 
 	      String line = null;
@@ -580,12 +665,5 @@ public class Client {
 	      stringBuilder.deleteCharAt(stringBuilder.length()-1);
 	      return stringBuilder.toString();
 	}
-
-	public static User getUser() {
-		return user;
-	}
-
-	public static void setUser(User user) {
-		Client.user = user;
-	}
+	
 }
