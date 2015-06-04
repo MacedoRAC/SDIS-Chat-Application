@@ -63,7 +63,7 @@ public class Client {
 			{
 				client.checkFriends();
 				try {
-					Thread.sleep(10000);
+					Thread.sleep(5000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -71,12 +71,21 @@ public class Client {
 				client.sendFriend("homer@simpsons.us");
 				
 				try {
-					Thread.sleep(20000);
+					Thread.sleep(5000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				System.out.println("@Client: friends["+client.user.getFriends().size()+"]="+client.user.getFriends().get(0));
+				
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				System.out.println("@Client: friends["+client.user.getFriends().size()+"]");
 			}
 			else return;
 			
@@ -91,7 +100,7 @@ public class Client {
 				client.checkFriends();
 				
 				try {
-					Thread.sleep(20000);
+					Thread.sleep(6000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -101,13 +110,23 @@ public class Client {
 				client.acceptFriend(client.user.getFriendRequests().get(0));
 				
 				try {
-					Thread.sleep(20000);
+					Thread.sleep(6000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
 				System.out.println("@Client: friends["+client.user.getFriends().size()+"]="+client.user.getFriends().get(0));
+				
+				client.removeFriend(client.user.getFriends().get(0));
+				
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println("@Client: friends["+client.user.getFriends().size()+"]");
 			}
 		}
 		else System.out.println("wrong args! (2/3)\n");
@@ -255,6 +274,13 @@ public class Client {
 		t.setName("acceptFriend");
 		t.start();
 	}
+	public void removeFriend(String email)
+	{
+		Runnable r = new RemoveFriendThread(email);
+		Thread t = new Thread(r);
+		t.setName("removeFriend");
+		t.start();
+	}
 	
 	private class CheckFriendsThread implements Runnable {
 
@@ -326,12 +352,18 @@ public class Client {
 				user.remFriendRequest(email);
 				threads.put(Thread.currentThread().getId(), "friend added: "+email);
 			}
+			else if(answer.startsWith("<remove>") && answer.endsWith("</remove>"))
+			{
+				user.remFriend(email);
+				threads.put(Thread.currentThread().getId(), "friend removed: "+email);
+			}
 			else
 			{
 				System.out.println("@Client/check_friend/#+"+Thread.currentThread().getId()+":bad response received - can't find \"<request>\", \"</request>\" or \"<accept>\", \"</accept>\" tags in body");
 				threads.put(Thread.currentThread().getId(), "server error");
 				return;
 			}
+			checkFriends();
 		}	
 	}
 	private class SendFriendThread implements Runnable {
@@ -465,6 +497,76 @@ public class Client {
 			
 			threads.put(Thread.currentThread().getId(), answer);
 		}
+	}
+	private class RemoveFriendThread implements Runnable {
+		
+		private String email;
+		
+		public RemoveFriendThread(String email)
+		{
+			this.email=email;
+		}
+
+		@Override
+		public void run() {
+			if(!user.getFriends().contains(email))
+			{
+				System.out.println("@Client/remove_friend/#+"+Thread.currentThread().getId()+":error - can't find this friend request");
+				threads.put(Thread.currentThread().getId(), "client error - no friend request");
+				return;
+			}
+			
+			// BUILD URL
+			URL url = null;
+			try {
+				url = new URL(urlS + "friend?type=remove&?email=" + user.getEmail() + "&friend="+email);
+			} catch (MalformedURLException e1) {
+				System.out.println("@Client/remove_friend/#+"+Thread.currentThread().getId()+":error initializing url");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/remove_friend/#+"+Thread.currentThread().getId()+":url initialized (\"" + url + "\")");
+			
+			//CONNECT AND SEND REQUEST
+			HttpURLConnection url_connect = null;
+			try {
+				url_connect = (HttpURLConnection) url.openConnection();
+				
+				url_connect.setRequestMethod("DELETE");
+				url_connect.setReadTimeout(60*1000);
+				url_connect.connect();
+										
+			} catch (IOException e1) {
+				System.out.println("@Client/remove_friend/#+"+Thread.currentThread().getId()+":error connecting");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/remove_friend/#+"+Thread.currentThread().getId()+":connected with request method \""+url_connect.getRequestMethod()+"\"");
+			System.out.println("@Client/remove_friend/#+"+Thread.currentThread().getId()+":request sent");
+			
+			//READ RESPONSE
+			String answer = null;
+			try {
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						url_connect.getInputStream()));
+				answer = BufReaderToString(in);
+			} catch (IOException e) {
+				System.out.println("@Client/remove_friend/#+"+Thread.currentThread().getId()+":error reading response");
+				e.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+
+			System.out.println("@Client/remove_friend/#+"+Thread.currentThread().getId()+":response received\nDATA:"
+					+ answer.trim());
+			
+			if(answer.equals("true")) user.remFriend(email);
+			
+			threads.put(Thread.currentThread().getId(), answer);
+			
+		}		
 	}
 	
  	public static String BufReaderToString(BufferedReader in) throws IOException {
