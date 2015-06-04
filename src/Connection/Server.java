@@ -35,7 +35,8 @@ public class Server {
 		int port = Integer.parseInt(args[1]);
 		
 		try {
-			server =  HttpServer.create(new InetSocketAddress(InetAddress.getByName(args[0]),port), 0);		
+			//server =  HttpServer.create(new InetSocketAddress(InetAddress.getByName(args[0]),port), 0);
+			server =  HttpServer.create(new InetSocketAddress("localhost",8000), 0);
 		} catch (IOException e) {
 			System.out.println("@Server:error creating server: "+e);
 			e.printStackTrace();

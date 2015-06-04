@@ -30,9 +30,11 @@ public class AddFriendController {
 
     @FXML
     private void addFriend(){
-       new Client().sendFriend(txtEmail.getText());
-
-        if(result) {
+        long threadID = new Client().sendFriend(txtEmail.getText());
+        String result = "error";
+        result = new Client().getThreads().get(threadID);
+        System.out.println("\n\n\n\n\n\n\n\n\n" + result + "\n\n\n\n\n\n\n\n\n");
+        if(!result.contains("error")) {
             lblError.setText("");
             lblSuccess.setText("Request sended.");
 
