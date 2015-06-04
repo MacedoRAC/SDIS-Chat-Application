@@ -247,39 +247,49 @@ public class Client {
 		return answer;			
 		
 	}	
-	public void checkFriends()
+	public long checkFriends()
 	{
 		Runnable r = new CheckFriendsThread();
 		Thread t = new Thread(r);
 		t.setName("check_friends");
 		t.start();
+		
+		return t.getId();
 	}	
-	public void sendFriend(String email)
+	public long sendFriend(String email)
 	{
 		Runnable r = new SendFriendThread(email);
 		Thread t = new Thread(r);
 		t.setName("sendFriend");
 		t.start();
+		
+		return t.getId();
 	}
-	public void acceptFriend(String email)
+	public long acceptFriend(String email)
 	{
 		Runnable r = new AcceptFriendThread(email);
 		Thread t = new Thread(r);
 		t.setName("acceptFriend");
 		t.start();
+		
+		return t.getId();
 	}
-	public void removeFriend(String email)
+	public long removeFriend(String email)
 	{
 		Runnable r = new RemoveFriendThread(email);
 		Thread t = new Thread(r);
 		t.setName("removeFriend");
 		t.start();
+		
+		return t.getId();
 	}
-	public void refuseFriend(String email) {
+	public long refuseFriend(String email) {
 		Runnable r = new RefuseFriendThread(email);
 		Thread t = new Thread(r);
 		t.setName("refuseFriend");
 		t.start();
+		
+		return t.getId();
 	}
 	
 	private class CheckFriendsThread implements Runnable {
