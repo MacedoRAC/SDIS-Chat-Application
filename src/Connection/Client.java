@@ -286,6 +286,9 @@ public class Client {
 
 		@Override
 		public void run() {
+			
+			threads.put(Thread.currentThread().getId(), "");
+			
 			// BUILD URL
 			URL url = null;
 			try {
@@ -382,6 +385,13 @@ public class Client {
 
 		@Override
 		public void run() {
+			
+			if(user.getFriends().contains(email))
+			{
+				threads.put(Thread.currentThread().getId(), "client error - friend already exists");
+				return;
+			}
+			
 			// BUILD URL
 			URL url = null;
 			try {
