@@ -1,6 +1,10 @@
 package GUI;
 
 import Connection.Client;
+import Database.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
@@ -17,6 +22,9 @@ import java.util.ResourceBundle;
 
 
 import GUI.Main;
+import javafx.stage.Stage;
+
+import javax.xml.soap.Node;
 
 public class LoginController {
 
@@ -76,6 +84,12 @@ public class LoginController {
         if(result.equals("true")){
             lblError.setText("");
             lblSuccess.setText("You're ready to go!");
+
+            try {
+                loadMainPage();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }else if(result.equals("false")){
             lblSuccess.setText("");
             lblError.setText("Email and Password don't match!");
@@ -89,6 +103,20 @@ public class LoginController {
             txtPassword.clear();
             txtEmail.clear();
         }
+    }
+
+    private void loadMainPage() throws Exception{
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("mainPage.fxml"));
+        Parent root = loader.load();
+        Main.stage.setScene(new Scene(root, 342, 555));
+
+        MainPageController controller = loader.<MainPageController>getController();
+        new Client().checkFriends();
+        ObservableList<String> friends = FXCollections.observableArrayList(Client.getUser().getFriends());
+        controller.initData(txtUsername.getText(), friends);
+
+        Main.stage.show();
     }
 
 }

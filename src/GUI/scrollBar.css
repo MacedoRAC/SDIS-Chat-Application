@@ -1,0 +1,125 @@
+/** CSS **/
+02
+	.mylistview{
+03
+	    -fx-border-color:derive(gray,80%);
+04
+	}
+05
+	 
+06
+	/* The main scrollbar CSS class of ListView */
+07
+	.mylistview .scroll-bar:horizontal ,
+08
+	.mylistview  .scroll-bar:vertical{
+09
+	    -fx-background-color:transparent;
+10
+	 
+11
+	}
+12
+	 
+13
+	/* The increment and decrement button CSS class of scrollbar */
+14
+	.mylistview .increment-button ,.mylistview .decrement-button {
+15
+	    -fx-background-color:transparent;
+16
+	    -fx-border-color:derive(gray,80%);
+17
+	}
+18
+	 
+19
+	/* The main scrollbar **track** CSS class  */
+20
+	.mylistview .scroll-bar:horizontal .track ,
+21
+	.mylistview .scroll-bar:vertical .track{
+22
+	     -fx-background-color: transparent;
+23
+	     -fx-border-color:derive(gray,80%);
+24
+	     -fx-background-radius: 0em;
+25
+	}
+26
+	 
+27
+	/* The main scrollbar **thumb** CSS class which we drag every time (movable) */
+28
+	.mylistview .scroll-bar:horizontal .thumb,
+29
+	.mylistview .scroll-bar:vertical .thumb {
+30
+	    -fx-background-color:derive(black,90%);
+31
+	    -fx-background-insets: 0, 0, 0;
+32
+	    -fx-background-radius: 0em;
+33
+	 
+34
+	}
+35
+	 
+36
+	/* ------------------------------------------------------------------------------------- */
+37
+	/** EVENT CSS **/
+38
+	/* ------------------------------------------------------------------------------------- */
+39
+	 
+40
+	/* The main scrollbar **track** CSS class on event of "hover" and "pressed" */
+41
+	 
+42
+	.mylistview .scroll-bar:horizontal:hover .track ,
+43
+	.mylistview .scroll-bar:horizontal:pressed .track ,
+44
+	.mylistview .scroll-bar:vertical:hover .track,
+45
+	.mylistview .scroll-bar:vertical:pressed .track{
+46
+	     -fx-background-color: derive(#434343,20%);
+47
+	 
+48
+	     -fx-opacity: 0.2;
+49
+	     -fx-background-radius: 0em;
+50
+	 
+51
+	}
+52
+	 
+53
+	/* The main scrollbar **thumb** CSS class on event of "hover" and "pressed" */
+54
+	.mylistview .scroll-bar .thumb:hover,
+55
+	.mylistview .scroll-bar .thumb:pressed{
+56
+	    -fx-background-color: derive(black,50%);
+57
+	}
+58
+	 
+59
+	.mylistview .increment-button:hover ,.mylistview .decrement-button:hover {
+60
+	    -fx-background-color:derive(gray,100%);
+61
+	    -fx-border-color:derive(gray,80%); 
+62
+	    -fx-padding:10px;
+63
+	}

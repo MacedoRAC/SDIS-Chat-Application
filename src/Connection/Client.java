@@ -15,14 +15,14 @@ import java.util.Hashtable;
 
 public class Client {
 
-	private String urlS;
+	private static String urlS;
 	//private static OutputStreamWriter out;
 	//private static BufferedReader in;
 	private Hashtable<Long,String> threads = new Hashtable<Long,String>();
 	
-	private User user = new User();
+	private static User user = new User();
 		
-	private Main gui;
+	private static Main gui;
 	
 	public static void main(String[] args) {
 		
@@ -30,9 +30,9 @@ public class Client {
 		
 		client.buildURL("localhost",8000);
 		
-		//gui = new Main();
-		//String[]argsFX = new String[0];
-		//gui.run(argsFX);
+		gui = new Main();
+		String[]argsFX = new String[0];
+		gui.run(argsFX);
 		
 		/*
 		String ret;
@@ -119,7 +119,7 @@ public class Client {
 		urlS = "http://"+address+":"+port+"/";
 	}
 	
-	public String signup(String email, String password)
+	public static String signup(String email, String password)
 	{
 		//BUILD URL
 		URL url = null;
@@ -168,7 +168,7 @@ public class Client {
 
 		return answer;
 	}
-	public String login(String email, String username, String password)
+	public static String login(String email, String username, String password)
 	{
 		//BUILD URL
 		URL url = null;
@@ -467,7 +467,7 @@ public class Client {
 		}
 	}
 	
- 	public String BufReaderToString(BufferedReader in) throws IOException {
+ 	public static String BufReaderToString(BufferedReader in) throws IOException {
 		StringBuilder stringBuilder = new StringBuilder();
 		 
 	      String line = null;
@@ -478,5 +478,12 @@ public class Client {
 	      stringBuilder.deleteCharAt(stringBuilder.length()-1);
 	      return stringBuilder.toString();
 	}
-	
+
+	public static User getUser() {
+		return user;
+	}
+
+	public static void setUser(User user) {
+		Client.user = user;
+	}
 }
