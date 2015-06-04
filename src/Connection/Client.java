@@ -386,6 +386,8 @@ public class Client {
 		@Override
 		public void run() {
 			
+			threads.put(Thread.currentThread().getId(), "");
+			
 			if(user.getFriends().contains(email))
 			{
 				threads.put(Thread.currentThread().getId(), "client error - friend already exists");
@@ -453,6 +455,8 @@ public class Client {
 		
 		@Override
 		public void run() {
+			
+			threads.put(Thread.currentThread().getId(), "");
 			
 			if(!user.getFriendRequests().contains(email))
 			{
@@ -524,6 +528,9 @@ public class Client {
 
 		@Override
 		public void run() {
+			
+			threads.put(Thread.currentThread().getId(), "");
+			
 			if(!user.getFriends().contains(email))
 			{
 				System.out.println("@Client/remove_friend/#+"+Thread.currentThread().getId()+":error - can't find this friend request");
@@ -593,6 +600,9 @@ public class Client {
 		
 		@Override
  		public void run() {
+			
+			threads.put(Thread.currentThread().getId(), "");
+			
 			if(!user.getFriendRequests().contains(email)) {
 				//ERRO
 				System.out.println("@Client/refuse_friend/#+"+Thread.currentThread().getId()+":error - can't find this friend request");
