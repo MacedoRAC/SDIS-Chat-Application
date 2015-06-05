@@ -76,11 +76,11 @@ public class Server {
 			new Thread(thread).start();
 		}
 	}
-	public static class RoomHandler implements HttpHandler {
+	public static class ChannelHandler implements HttpHandler {
 		
 		@Override
 		public void handle(HttpExchange request) throws IOException {
-			Runnable thread = new SignupThread(request);
+			Runnable thread = new ChannelThread(request);
 			new Thread(thread).start();
 		}
 		
@@ -526,19 +526,18 @@ public class Server {
 			}
 		}
 	}
-	private static class RoomThread implements Runnable {
+	private static class ChannelThread implements Runnable {
 
 		private HttpExchange request;
 		
-		RoomThread(HttpExchange request)
+		ChannelThread(HttpExchange request)
 		{
 			this.request = request;
 		}	
 		
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
-			
+						
 		}
 		
 	}
