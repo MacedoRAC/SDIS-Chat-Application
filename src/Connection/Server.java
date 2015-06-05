@@ -53,22 +53,37 @@ public class Server {
 	}
 	
 	public static class SignupHandler implements HttpHandler {
+		
+		@Override
 		public void handle(HttpExchange request) {
 			Runnable thread = new SignupThread(request);
 			new Thread(thread).start();
 		}
 	}	
 	public static class LoginHandler implements HttpHandler {
+		
+		@Override
 		public void handle(HttpExchange request) {
 			Runnable thread = new LoginThread(request);
 			new Thread(thread).start();
 		}	
 	}
 	public static class FriendHandler implements HttpHandler {
+		
+		@Override
 		public void handle(HttpExchange request) {
 			Runnable thread = new FriendThread(request);
 			new Thread(thread).start();
 		}
+	}
+	public static class ChannelHandler implements HttpHandler {
+		
+		@Override
+		public void handle(HttpExchange request) throws IOException {
+			Runnable thread = new ChannelThread(request);
+			new Thread(thread).start();
+		}
+		
 	}
 	
 	private static class SignupThread implements Runnable {
@@ -112,10 +127,11 @@ public class Server {
 				{
 					String email=query.substring(indE+"email=".length(),indP-2);
 					String pass=query.substring(indP+"pass=".length());
+					int passI=Integer.parseInt(pass);
 
 					if(!findUser(email))
 					{
-						db.add(email, new User(email,pass));
+						db.add(email, new User(email,passI));
 						System.out.println("@Server/signup/#+"+Thread.currentThread().getId()+":entry added");
 					}
 					else
@@ -197,9 +213,10 @@ public class Server {
 					String email=query.substring(indE+"email=".length(),indU-2);
 					String user=query.substring(indU+"user=".length(),indP-2);
 					String pass=query.substring(indP+"pass=".length());
+					int passI=Integer.parseInt(pass);
 					
 
-					if(!findUser(email) || !db.getUsers().get(email).getPassword().equals(pass))
+					if(!findUser(email) || db.getUsers().get(email).getPassword()!=passI)
 					{
 						System.out.println("@Server/login/#+"+Thread.currentThread().getId()+":no match was found for that email-pass pair");
 						response="false";
@@ -508,6 +525,21 @@ public class Server {
 				}
 			}
 		}
+	}
+	private static class ChannelThread implements Runnable {
+
+		private HttpExchange request;
+		
+		ChannelThread(HttpExchange request)
+		{
+			this.request = request;
+		}	
+		
+		@Override
+		public void run() {
+						
+		}
+		
 	}
 	
 	public static boolean findUser(String email)

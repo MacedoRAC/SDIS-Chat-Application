@@ -20,13 +20,13 @@
       <children>
         <Text fill="WHITE" fontSmoothingType="LCD" layoutX="87.0" layoutY="204.0" strikethrough="false" strokeType="OUTSIDE" strokeWidth="0.0" text="Sign in or Register" textAlignment="CENTER" />
         <Text id="nowBtn" fill="#893d00" fontSmoothingType="LCD" layoutX="187.0" layoutY="204.0" onMouseClicked="#registerPanel" strikethrough="false" strokeType="OUTSIDE" strokeWidth="0.0" style="" styleClass=", underline" text="NOW" textAlignment="CENTER" />
-        <TextField fx:id="txtUsername" layoutX="51.0" layoutY="281.0" prefWidth="200.0" promptText="Username (optional)" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;&#10;-fx-highlight-fill: #893d00;&#10;-fx-highlight-text-fill: #fff;" text="" />
+        <TextField id="txtUsername" fx:id="txtEmail" layoutX="50.0" layoutY="217.0" prefWidth="200.0" promptText="Email" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;&#10;-fx-highlight-fill: #893d00;&#10;-fx-highlight-text-fill: #fff;" text="" />	
         <PasswordField fx:id="txtPassword" layoutX="50.0" layoutY="249.0" prefWidth="200.0" promptText="Password" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;" />
+        <TextField fx:id="txtUsername" layoutX="51.0" layoutY="281.0" prefWidth="200.0" promptText="Username (optional)" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;&#10;-fx-highlight-fill: #893d00;&#10;-fx-highlight-text-fill: #fff;" text="" />
         <Text fill="WHITE" fontSmoothingType="LCD" layoutX="99.0" layoutY="320.0" strikethrough="false" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="underline" text="Recover password" textAlignment="CENTER" underline="false" />
         <Button id="" fx:id="loginBtn" cancelButton="false" contentDisplay="CENTER" defaultButton="false" layoutX="122.0" layoutY="362.0" mnemonicParsing="false" onAction="#signIn" style="-fx-background-color: #893d00;&#10;-fx-background-radius: 0px;" styleClass="btnZoom" text="Login" textAlignment="CENTER" textFill="WHITE" textOverrun="ELLIPSIS" wrapText="false" />
         <Label fx:id="lblSuccess" alignment="CENTER" layoutX="22.0" layoutY="332.0" minWidth="-Infinity" prefWidth="257.0" text="" textFill="#0c9900" />
         <Label id="lblSuccess" fx:id="lblError" alignment="CENTER" layoutX="22.0" layoutY="332.0" prefWidth="257.0" text="" textFill="RED" />
-        <TextField id="txtUsername" fx:id="txtEmail" layoutX="50.0" layoutY="217.0" prefWidth="200.0" promptText="Email" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;&#10;-fx-highlight-fill: #893d00;&#10;-fx-highlight-text-fill: #fff;" text="" />
       </children>
     </Pane>
     <ImageView id="logo_white" fitWidth="257.0" layoutX="22.0" layoutY="43.0" pickOnBounds="true" preserveRatio="true">

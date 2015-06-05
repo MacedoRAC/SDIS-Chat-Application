@@ -82,9 +82,20 @@ public class LoginController {
         String result = Client.login(txtEmail.getText(), txtUsername.getText(), txtPassword.getText());
 
 
-        if(result.equals("true")){
+        if(result.startsWith("true")){
             lblError.setText("");
             lblSuccess.setText("You're ready to go!");
+            
+            if(result.length()>"true".length())
+            {
+            	int indUB = result.indexOf("<username>");
+				int indUE = result.indexOf("</username>");
+				if(indUB==-1 || indUE==-1)
+				{
+					System.out.println("@ClientGUI/login:bad response received - can't find \"<username>\" or \"</username>\" tags in body");
+				}
+				else txtUsername.setText(result.substring(indUB+"<username>".length(),indUE));
+            }
 
             try {
                 loadMainPage();

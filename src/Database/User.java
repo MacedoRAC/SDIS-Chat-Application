@@ -6,17 +6,17 @@ public class User {
 	
 	private String email="";
 	private String username="";
-	private String password="";
+	private int password;
 	private ArrayList<String> friends=new ArrayList<String>();
 	private ArrayList<String> friendRequests = new ArrayList<String>();
 	
 	public User(){}
-	public User(String email, String username, String password) {
+	public User(String email, String username, int password) {
 		setEmail(email);
 		setUsername(username);
 		setPassword(password);
 	}
-	public User(String email, String password) {
+	public User(String email, int password) {
 		setEmail(email);
 		setUsername(email);
 		setPassword(password);
@@ -29,7 +29,7 @@ public class User {
 	public String getUsername() {
 		return username;
 	}
-	public String getPassword() {
+	public int getPassword() {
 		return password;
 	}
 	public ArrayList<String> getFriends() {
@@ -45,7 +45,7 @@ public class User {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	public void setPassword(String password) {
+	public void setPassword(int password) {
 		this.password = password;
 	}
 	public void setFriends(ArrayList<String> contacts) {
