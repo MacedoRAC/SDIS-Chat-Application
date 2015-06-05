@@ -124,13 +124,11 @@ public class LoginController {
         Main.stage.setScene(new Scene(root, 342, 555));
 
         MainPageController controller = loader.<MainPageController>getController();
-        new Client().checkFriends();
-        ArrayList<String> list = Client.getUser().getFriends();
-        ObservableList<String> friends = FXCollections.observableArrayList("burn@simpsons.us", "bart@simpsons.us", "lisa@simpsons.us");
 
-        /*for(int i = 0; i < list.size(); i++){
-            friends.add(list.get(i));
-        }*/
+        new Client().askFriends();
+        new Client().checkFriends();
+
+        ObservableList<String> friends = FXCollections.observableArrayList(Client.getUser().getFriends());
 
         controller.initData(txtUsername.getText(), friends);
 

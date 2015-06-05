@@ -31,11 +31,11 @@ public class Client {
 		
 		client.buildURL("localhost",8000);
 		
-		/*gui = new Main();
+		gui = new Main();
 		String[]argsFX = new String[0];
-		gui.run(argsFX);*/
+		gui.run(argsFX);
 		
-		client.login("homer@simpsons.us", "homer", "1234");
+		/*client.login("homer@simpsons.us", "homer", "1234");
 		client.askFriends();
 		
 		Scanner scanner = new Scanner(System.in);
@@ -45,7 +45,7 @@ public class Client {
 		for(int i=0;i<user.getFriends().size();i++)
 		{
 			System.out.println("\t"+user.getFriends().get(i));
-		}
+		}*/
 		
 	}
 	
@@ -54,7 +54,7 @@ public class Client {
 		urlS = "http://"+address+":"+port+"/";
 	}
 	
-	public String signup(String email, String password)
+	public static String signup(String email, String password)
 	{
 		//BUILD URL
 		URL url = null;
@@ -103,7 +103,7 @@ public class Client {
 
 		return answer;
 	}
-	public String login(String email, String username, String password)
+	public static String login(String email, String username, String password)
 	{
 		//BUILD URL
 		URL url = null;
