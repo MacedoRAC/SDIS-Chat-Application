@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 /**
  * Created by Andr� on 04/06/2015.
  */
-public class AddFriendController {
+public class RemoveFriendController {
 
     @FXML
     private TextField txtEmail;
@@ -22,15 +22,15 @@ public class AddFriendController {
     private Label lblError;
 
     @FXML
-    private Button addFriendBtn;
+    private Button removeFriendBtn;
 
     @FXML
     private Button cancelBtn;
 
 
     @FXML
-    private void addFriend(){
-        long threadID = new Client().sendFriend(txtEmail.getText());
+    private void removeFriend(){
+        long threadID = new Client().removeFriend(txtEmail.getText());
         String result = "error";
         
         while(new Client().getThreads().get(threadID)==null);
@@ -38,14 +38,15 @@ public class AddFriendController {
         //TODO remove thread from hashtable
         if(!result.contains("error")) {
             lblError.setText("");
-            lblSuccess.setText("Request sent.");
+            lblSuccess.setText("Friend removed!");
+
 
             // get a handle to the stage
-            Stage stage = (Stage) addFriendBtn.getScene().getWindow();
+            Stage stage = (Stage) removeFriendBtn.getScene().getWindow();
             stage.close();
         }else {
             lblSuccess.setText("");
-            lblError.setText("Friend not added! Try again.");
+            lblError.setText("Friend not removed! Try again.");
         }
     }
 

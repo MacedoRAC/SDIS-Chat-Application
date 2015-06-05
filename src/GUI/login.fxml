@@ -14,7 +14,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane id="AnchorPane" maxHeight="400.0" maxWidth="300.0" minHeight="400.0" minWidth="300.0" prefHeight="400.0" prefWidth="300.0" snapToPixel="true" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="GUI.LoginController">
+<AnchorPane id="AnchorPane" maxHeight="400.0" maxWidth="300.0" minHeight="400.0" minWidth="300.0" prefHeight="400.0" prefWidth="300.0" snapToPixel="true" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.LoginController">
   <children>
     <Pane disable="false" focusTraversable="false" prefHeight="400.0" prefWidth="300.0" snapToPixel="true" style="-fx-background-color: #DE6F16;" visible="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
@@ -23,7 +23,6 @@
         <TextField id="txtUsername" fx:id="txtEmail" layoutX="50.0" layoutY="217.0" prefWidth="200.0" promptText="Email" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;&#10;-fx-highlight-fill: #893d00;&#10;-fx-highlight-text-fill: #fff;" text="" />	
         <PasswordField fx:id="txtPassword" layoutX="50.0" layoutY="249.0" prefWidth="200.0" promptText="Password" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;" />
         <TextField fx:id="txtUsername" layoutX="51.0" layoutY="281.0" prefWidth="200.0" promptText="Username (optional)" style="-fx-border-radius: 0;&#10;-fx-border-color: #893d00;&#10;-fx-text-fill: #893d00;&#10;-fx-prompt-text-fill: #893d00;&#10;-fx-highlight-fill: #893d00;&#10;-fx-highlight-text-fill: #fff;" text="" />
-        <Text fill="WHITE" fontSmoothingType="LCD" layoutX="99.0" layoutY="320.0" strikethrough="false" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="underline" text="Recover password" textAlignment="CENTER" underline="false" />
         <Button id="" fx:id="loginBtn" cancelButton="false" contentDisplay="CENTER" defaultButton="false" layoutX="122.0" layoutY="362.0" mnemonicParsing="false" onAction="#signIn" style="-fx-background-color: #893d00;&#10;-fx-background-radius: 0px;" styleClass="btnZoom" text="Login" textAlignment="CENTER" textFill="WHITE" textOverrun="ELLIPSIS" wrapText="false" />
         <Label fx:id="lblSuccess" alignment="CENTER" layoutX="22.0" layoutY="332.0" minWidth="-Infinity" prefWidth="257.0" text="" textFill="#0c9900" />
         <Label id="lblSuccess" fx:id="lblError" alignment="CENTER" layoutX="22.0" layoutY="332.0" prefWidth="257.0" text="" textFill="RED" />
@@ -31,7 +30,7 @@
     </Pane>
     <ImageView id="logo_white" fitWidth="257.0" layoutX="22.0" layoutY="43.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="@img/logo_white.png" preserveRatio="true" smooth="true" />
+        <Image preserveRatio="true" smooth="true" url="@img/logo_white.png" />
       </image>
     </ImageView>
   </children>

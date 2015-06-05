@@ -15,16 +15,16 @@
                   <Font size="18.0" />
                </font>
             </Text>
-            <ListView fx:id="peopleOnChat" layoutY="48.0" prefHeight="304.0" prefWidth="169.0" style="-fx-background-color: #893D00;" />
-            <Button fx:id="addPeopleBtn" layoutY="351.0" mnemonicParsing="false" onAction="#addPeopleToRoom" prefHeight="49.0" prefWidth="169.0" style="-fx-background-color: ffaf6f; -fx-background-radius: 0;" text="Add People" textFill="#893d00">
+            <ListView fx:id="peopleOnChat" layoutY="48.0" prefHeight="304.0" prefWidth="169.0" style="-fx-background-color: #893D00;" stylesheets="@style.css" />
+            <Button fx:id="addPeopleBtn" layoutY="351.0" mnemonicParsing="false" onAction="#addPeopleToRoom" prefHeight="49.0" prefWidth="169.0" style="-fx-background-color: ffaf6f; -fx-background-radius: 0;" styleClass="btnZoom" stylesheets="@style.css" text="Add People" textFill="#893d00">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
          </children>
       </Pane>
-      <ListView fx:id="msgsContainer" layoutX="169.0" prefHeight="329.0" prefWidth="430.0" stylesheets="@style.css" />
+      <ListView fx:id="msgsContainer" layoutX="169.0" prefHeight="329.0" prefWidth="430.0" />
       <TextArea fx:id="msgField" layoutX="169.0" layoutY="329.0" prefHeight="71.0" prefWidth="359.0" promptText="Write your message here..." style="-fx-background-radius: 0; -fx-highlight-fill: #893d00; -fx-highlight-text-fill: #893d00; -fx-prompt-text-fill: #893d00;" />
-      <Button fx:id="sendBtn" layoutX="528.0" layoutY="329.0" mnemonicParsing="false" onAction="#send" prefHeight="70.0" prefWidth="72.0" style="-fx-background-color: #893d00; -fx-background-radius: 0;" text="Send" textFill="#ffaf6f" />
+      <Button fx:id="sendBtn" layoutX="528.0" layoutY="329.0" mnemonicParsing="false" onAction="#send" prefHeight="70.0" prefWidth="72.0" style="-fx-background-color: #893d00; -fx-background-radius: 0;" styleClass="btnZoom" stylesheets="@style.css" text="Send" textFill="#ffaf6f" />
    </children>
 </AnchorPane>

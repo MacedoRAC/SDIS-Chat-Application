@@ -1,5 +1,8 @@
 package GUI;
 
+import Connection.Client;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -33,5 +36,10 @@ public class RoomController {
     @FXML
     private void addPeopleToRoom(){
 
+    }
+
+    public void initData(String myUsername, String friend) {
+        ObservableList<String> people = FXCollections.observableArrayList(myUsername, friend);
+        this.peopleOnChat.setItems(people);
     }
 }

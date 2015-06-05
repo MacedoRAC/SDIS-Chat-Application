@@ -1,5 +1,8 @@
 package GUI;
 
+import Connection.Client;
+import Connection.Server;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -9,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -29,6 +33,9 @@ public class MainPageController {
 
     @FXML
     private ListView<String> listFriends = new ListView<>();
+
+    @FXML
+    private Button removeFriendBtn;
 
 
     public void initData(String user, ObservableList<String> friends) {
@@ -52,6 +59,18 @@ public class MainPageController {
     }
 
     @FXML
+    private void openRemoveFriendPage() throws Exception{
+
+        Parent root = FXMLLoader.load(getClass().getResource("removeFriend.fxml"));
+        Stage stage = new Stage();
+        stage.getIcons().add(new Image("/GUI/img/icon.png"));
+        stage.setTitle("Remove a friend");
+        stage.setScene(new Scene(root, 330, 180));
+        stage.setResizable(false);
+        stage.show();
+    }
+
+    @FXML
     private void logout(){
         Parent login = null;
         try {
@@ -61,5 +80,30 @@ public class MainPageController {
         }
         Main.stage.setScene(new Scene(login, 290, 390));
         Main.stage.show();
+    }
+
+    @FXML
+    private void openRoom(MouseEvent event){
+        String friend = listFriends.getSelectionModel().getSelectedItem();
+
+        Parent root = null;
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("room.fxml"));
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Stage stage = new Stage();
+        stage.getIcons().add(new Image("/GUI/img/icon.png"));
+        stage.setTitle("Chating...");
+        stage.setScene(new Scene(root, 590, 390));
+        stage.setResizable(false);
+
+        RoomController controller = loader.<RoomController>getController();
+
+        controller.initData(Client.getUser().getUsername(), friend);
+
+        stage.show();
     }
 }
