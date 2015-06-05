@@ -5,3 +5,25 @@
 .btnZoom:hover{
 	-fx-border-color: #fff;
 }
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: #893D00;
+    -fx-text-fill: white;
+}
+
+.list-cell {
+    -fx-text-fill: #893D00;
+}
+
+.list-cell:odd {
+    -fx-background-color: #EE8F43;
+}
+
+.list-cell:even {
+    -fx-background-color: #FFAF6F;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: #893D00;
+    -fx-text-fill: white;
+}

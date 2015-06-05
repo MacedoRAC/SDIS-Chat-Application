@@ -46,7 +46,7 @@ public class MainPageController {
         Stage stage = new Stage();
         stage.getIcons().add(new Image("/GUI/img/icon.png"));
         stage.setTitle("Add a new friend");
-        stage.setScene(new Scene(root, 335, 185));
+        stage.setScene(new Scene(root, 330, 180));
         stage.setResizable(false);
         stage.show();
     }
@@ -59,7 +59,7 @@ public class MainPageController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Main.stage.setScene(new Scene(login, 280, 380));
+        Main.stage.setScene(new Scene(login, 290, 390));
         Main.stage.show();
     }
 }
