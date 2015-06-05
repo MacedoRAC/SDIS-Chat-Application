@@ -213,13 +213,61 @@ public class Client {
 		
 		return t.getId();
 	}
-	public long askFriends() {
-		Runnable r = new AskFriendsThread();
-		Thread t = new Thread(r);
-		t.setName("askFriends");
-		t.start();
+	public static String askFriends() {
+		// BUILD URL
+		URL url = null;
+		try {
+			url = new URL(urlS + "friend?type=ask&?email=" + user.getEmail());
+		} catch (MalformedURLException e1) {
+			System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":error initializing url");
+			e1.printStackTrace();
+			return "client error";
+		}
+		System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":url initialized (\"" + url + "\")");
 		
-		return t.getId();
+		//CONNECT AND SEND REQUEST
+		HttpURLConnection url_connect = null;
+		try {
+			url_connect = (HttpURLConnection) url.openConnection();
+			
+			url_connect.setRequestMethod("GET");
+			url_connect.setReadTimeout(60*2*1000);
+			url_connect.connect();
+									
+		} catch (IOException e1) {
+			System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":error connecting");
+			e1.printStackTrace();
+			return "client error";
+		}
+		System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":connected with request method \""+url_connect.getRequestMethod()+"\"");
+		System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":request sent");
+		
+		//READ RESPONSE
+		String answer=null;
+		try {
+			BufferedReader in  = new BufferedReader(new InputStreamReader(url_connect.getInputStream()));
+			answer = BufReaderToString(in);
+		} catch (IOException e) {
+			System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":error reading response");
+			e.printStackTrace();
+			return "client error";
+		}
+		
+		System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":response received\nDATA:"+answer.trim());
+		
+		int indEB = answer.indexOf("<email>");
+		int indEE = answer.indexOf("</email>");
+		
+		while(indEB!=-1 && indEE!=-1)
+		{
+			String email = answer.substring(indEB+"<email>".length(),indEE);
+			user.addFriend(email);
+			
+			indEB = answer.indexOf("<email>", indEB+1);
+			indEE = answer.indexOf("</email>", indEE+1);
+		}
+		
+		return "true";
 	}
 	
 	private class CheckFriendsThread implements Runnable {
@@ -604,74 +652,7 @@ public class Client {
 		}
 		
 	}
-	private class AskFriendsThread implements Runnable {
 
-		@Override
-		public void run() {
-			
-			threads.put(Thread.currentThread().getId(), "");
-			
-			// BUILD URL
-			URL url = null;
-			try {
-				url = new URL(urlS + "friend?type=ask&?email=" + user.getEmail());
-			} catch (MalformedURLException e1) {
-				System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":error initializing url");
-				e1.printStackTrace();
-				threads.put(Thread.currentThread().getId(), "client error");
-				return;
-			}
-			System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":url initialized (\"" + url + "\")");
-			
-			//CONNECT AND SEND REQUEST
-			HttpURLConnection url_connect = null;
-			try {
-				url_connect = (HttpURLConnection) url.openConnection();
-				
-				url_connect.setRequestMethod("GET");
-				url_connect.setReadTimeout(60*2*1000);
-				url_connect.connect();
-										
-			} catch (IOException e1) {
-				System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":error connecting");
-				e1.printStackTrace();
-				threads.put(Thread.currentThread().getId(), "client error");
-				return;
-			}
-			System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":connected with request method \""+url_connect.getRequestMethod()+"\"");
-			System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":request sent");
-			
-			//READ RESPONSE
-			String answer=null;
-			try {
-				BufferedReader in  = new BufferedReader(new InputStreamReader(url_connect.getInputStream()));
-				answer = BufReaderToString(in);
-			} catch (IOException e) {
-				System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":error reading response");
-				e.printStackTrace();
-				threads.put(Thread.currentThread().getId(), "client error");
-				return;
-			}
-			
-			System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":response received\nDATA:"+answer.trim());
-			
-			int indEB = answer.indexOf("<email>");
-			int indEE = answer.indexOf("</email>");
-			
-			while(indEB!=-1 && indEE!=-1)
-			{
-				String email = answer.substring(indEB+"<email>".length(),indEE);
-				user.addFriend(email);
-				
-				indEB = answer.indexOf("<email>", indEB+1);
-				indEE = answer.indexOf("</email>", indEE+1);
-			}
-						
-			threads.put(Thread.currentThread().getId(), "true");
-			
-		}
-		
-	}
 	private class CreateChannelThread implements Runnable {
 		
 		private String name;
@@ -684,22 +665,6 @@ public class Client {
 		@Override
 		public void run() {
 						
-		}
-		
-	}
-	private class JoinChannelThread implements Runnable {
-		
-		private String id;
-		
-		public JoinChannelThread(String id)
-		{
-			this.id=id;
-		}
-
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			
 		}
 		
 	}
