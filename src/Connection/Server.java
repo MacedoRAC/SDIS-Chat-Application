@@ -53,22 +53,37 @@ public class Server {
 	}
 	
 	public static class SignupHandler implements HttpHandler {
+		
+		@Override
 		public void handle(HttpExchange request) {
 			Runnable thread = new SignupThread(request);
 			new Thread(thread).start();
 		}
 	}	
 	public static class LoginHandler implements HttpHandler {
+		
+		@Override
 		public void handle(HttpExchange request) {
 			Runnable thread = new LoginThread(request);
 			new Thread(thread).start();
 		}	
 	}
 	public static class FriendHandler implements HttpHandler {
+		
+		@Override
 		public void handle(HttpExchange request) {
 			Runnable thread = new FriendThread(request);
 			new Thread(thread).start();
 		}
+	}
+	public static class RoomHandler implements HttpHandler {
+		
+		@Override
+		public void handle(HttpExchange request) throws IOException {
+			Runnable thread = new SignupThread(request);
+			new Thread(thread).start();
+		}
+		
 	}
 	
 	private static class SignupThread implements Runnable {
@@ -510,6 +525,22 @@ public class Server {
 				}
 			}
 		}
+	}
+	private static class RoomThread implements Runnable {
+
+		private HttpExchange request;
+		
+		RoomThread(HttpExchange request)
+		{
+			this.request = request;
+		}	
+		
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 	
 	public static boolean findUser(String email)
