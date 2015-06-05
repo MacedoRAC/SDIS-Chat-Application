@@ -13,6 +13,7 @@
 
 .list-cell {
     -fx-text-fill: #893D00;
+    -fx-alignment: center ;
 }
 
 .list-cell:odd {
