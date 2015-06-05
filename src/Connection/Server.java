@@ -132,7 +132,7 @@ public class Server {
 
 					if(!findUser(email))
 					{
-						db.add(email, new User(email,passI));
+						db.addUser(email, new User(email,passI));
 						System.out.println("@Server/signup/#+"+Thread.currentThread().getId()+":entry added");
 					}
 					else
@@ -569,6 +569,111 @@ public class Server {
 		
 		@Override
 		public void run() {
+					
+			System.out.println("@Server/channel/#+"+Thread.currentThread().getId()+":request received");
+			String method = request.getRequestMethod();
+			System.out.println("@Server/channel/#+"+Thread.currentThread().getId()+" Method:\""+method+"\"");
+			String query = request.getRequestURI().getQuery();
+			System.out.println("@Server/channel/#+"+Thread.currentThread().getId()+" Query:\""+query+"\"");
+			
+			String response="true";
+			int code=200;
+			
+			int indT = query.indexOf("type=");
+			if(indT == -1)
+			{
+				System.out.println("@Server/channel/#+"+Thread.currentThread().getId()+":bad request received - can't find \"type=\"");
+				response="error - no valid type query";
+				code=400;
+			}
+			
+			int indE = query.indexOf("email=");
+			if(indE == -1)
+			{
+				System.out.println("@Server/channel/#+"+Thread.currentThread().getId()+":bad request received - can't find \"email=\"");
+				response="error - no valid email query";
+				code=400;
+			}
+			
+			String type=query.substring(indT+"type=".length(), indE - 2);
+			String email=query.substring(indE+"email=".length());
+			
+			if(response.equals("true"))
+			{
+				if(method.equals("PUT"))
+				{
+					if(type.equals("create"))
+					{
+						int indN = query.indexOf("name=");
+						if (indN == -1)
+						{
+							System.out
+									.println("@Server/channel/#+"+Thread.currentThread().getId()+":bad request received - can't find \"name=\"");
+							response = "error - no valid name query";
+							code = 400;
+						}
+
+						int indF = query.indexOf("friend=");
+						if (indF == -1)
+						{
+							System.out.println("@Server/channel/#+"+Thread.currentThread().getId()+":bad request received - can't find \"friend=\"");
+							response = "error - no valid friend query";
+							code = 400;
+						}
+
+						email = query.substring(indE + "email=".length(), indN - 1);
+						String name = query.substring(indN + "name=".length(), indF -1);
+						String friend = query.substring(indF + "friend=".length());
+						
+						if(!findUser(email))
+						{
+							System.out.println("@Server/channel/#+"+Thread.currentThread().getId()+":bad request received - email not registered \""+email+"\"");
+							response="error - email not registered \""+email+"\"";
+							code=400;
+						}
+						
+						if(!findUser(friend))
+						{
+							System.out.println("@Server/channel/#+"+Thread.currentThread().getId()+":bad request received - friend not registered \""+friend+"\"");
+							response="error - friend not registered \""+friend+"\"";
+							code=400;
+						}
+						
+						if(response.equals("true"))
+						{
+														
+						}
+						
+						
+					}
+					else
+					{
+						System.out.println("@Server/channel/#+"+Thread.currentThread().getId()+":bad request received - invalid type");
+						response = "error - no valid type query";
+						code = 400;
+					}
+				}
+				else
+				{
+					System.out.println("@Server/channel/#+"+Thread.currentThread().getId()+":bad request received - invalid method (\""+method+"\")");
+					response="error - invalid method";
+					code=400;
+				}
+			}
+			else
+			{
+				try {
+					request.sendResponseHeaders(code, response.length());				
+					OutputStream os = request.getResponseBody();
+					os.write(response.getBytes());
+					System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent \""+response+"\"");
+					os.close();
+					
+				} catch (IOException e) {
+					System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":error sending response: " + e);
+					e.printStackTrace();
+				}
+			}
 						
 		}
 		

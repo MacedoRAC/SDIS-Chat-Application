@@ -8,10 +8,12 @@ import java.util.Hashtable;
 public class Database {
 
     private Hashtable<String, User> users;
+    private Hashtable<String, Channel> channels;
 
 
     public Database(){
         users = new Hashtable<>();
+        channels = new Hashtable<>();
 
         populateUsers();
     }
@@ -51,9 +53,13 @@ public class Database {
         this.users = db;
     }
 
-    public void add(String email, User user) {
+    public void addUser(String email, User user) {
         users.put(email, user);
 
         printUsers();
+    }
+    
+    public void addChannel(String id, Channel channel) {
+    	channels.put(id, channel);
     }
 }
