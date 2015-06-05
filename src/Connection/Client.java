@@ -31,21 +31,9 @@ public class Client {
 		
 		client.buildURL("localhost",8000);
 		
-		/*gui = new Main();
+		gui = new Main();
 		String[]argsFX = new String[0];
-		gui.run(argsFX);*/
-		
-		client.login("homer@simpsons.us", "homer", "1234");
-		client.askFriends();
-		
-		Scanner scanner = new Scanner(System.in);
-		scanner.next();
-		
-		System.out.println("friends["+user.getFriends().size()+"]:");
-		for(int i=0;i<user.getFriends().size();i++)
-		{
-			System.out.println("\t"+user.getFriends().get(i));
-		}
+		gui.run(argsFX);
 		
 	}
 	
@@ -668,6 +656,37 @@ public class Client {
 			}
 						
 			threads.put(Thread.currentThread().getId(), "true");
+			
+		}
+		
+	}
+	private class CreateChannelThread implements Runnable {
+		
+		private String name;
+		
+		public CreateChannelThread(String name)
+		{
+			this.name=name;
+		}
+
+		@Override
+		public void run() {
+						
+		}
+		
+	}
+	private class JoinChannelThread implements Runnable {
+		
+		private String id;
+		
+		public JoinChannelThread(String id)
+		{
+			this.id=id;
+		}
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
 			
 		}
 		

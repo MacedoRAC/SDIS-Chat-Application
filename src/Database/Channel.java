@@ -10,21 +10,59 @@ public class Channel {
 
     private String id;
     private String name;
-    private String password;
     private ArrayList<User> users;
     private ArrayList<Message> msgs;
-    private Boolean hasPassword;
 
-
-    void Channel(){
+   public Channel(){
         this.id = generateRandomId();
         this.name = "";
-        this.password = "";
         this.users = new ArrayList<>();
         this.msgs = new ArrayList<>();
-        this.hasPassword = false;
     }
+   
+   public Channel(String name){
+       this.id = generateRandomId();
+       setName(name);
+       this.users = new ArrayList<>();
+       this.msgs = new ArrayList<>();
+   }
 
+    public String getId() {
+        return id;
+    }
+    public String getName()
+    {
+    	return name;
+    }
+    
+    public void setId(String id) {
+        this.id = id;
+    }
+    public void setName(String name)
+    {
+    	this.name=name;
+    }
+    public void addUser(User new_user){
+
+        if(!users.contains(new_user)) {
+            users.add(new_user);
+        }else{
+            System.out.println("User " + new_user.getUsername() + " is already in this channel");
+        }
+    }
+    public void removeUser(User new_user){
+
+        if(users.contains(new_user)) {
+            users.remove(new_user);
+        }else{
+            System.out.println("User " + new_user.getUsername() + " isn't in this channel");
+        }
+    }
+    public void addMessage(Message msg)
+    {
+    	msgs.add(msg);
+    }
+    
     private String generateRandomId(){
 
         char[] chars = "abcdefghijklmnopqrstuvwxyz12345967890ABCDEFGHIJKMLMNOPQRSTWXYZ".toCharArray();
@@ -38,30 +76,5 @@ public class Channel {
 
         return sb.toString();
     }
-
-    public void addUser(User new_user){
-
-        if(!users.contains(new_user)) {
-            users.add(new_user);
-        }else{
-            System.out.println("User " + new_user.getUsername() + " is already in this channel");
-        }
-    }
-
-    public void removeUser(User new_user){
-
-        if(users.contains(new_user)) {
-            users.remove(new_user);
-        }else{
-            System.out.println("User " + new_user.getUsername() + " isn't in this channel");
-        }
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+    
 }

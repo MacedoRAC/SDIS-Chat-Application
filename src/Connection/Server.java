@@ -48,6 +48,7 @@ public class Server {
 		server.createContext("/login", new LoginHandler());
 		server.createContext("/signup", new SignupHandler());
 		server.createContext("/friend", new FriendHandler());
+		server.createContext("/channel", new ChannelHandler());
 		server.setExecutor(null);
         server.start();
 	}
