@@ -672,6 +672,37 @@ public class Client {
 		}
 		
 	}
+	private class CreateChannelThread implements Runnable {
+		
+		private String name;
+		
+		public CreateChannelThread(String name)
+		{
+			this.name=name;
+		}
+
+		@Override
+		public void run() {
+						
+		}
+		
+	}
+	private class JoinChannelThread implements Runnable {
+		
+		private String id;
+		
+		public JoinChannelThread(String id)
+		{
+			this.id=id;
+		}
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
 	
  	public static String BufReaderToString(BufferedReader in) throws IOException {
 		StringBuilder stringBuilder = new StringBuilder();
