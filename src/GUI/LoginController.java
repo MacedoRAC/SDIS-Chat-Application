@@ -125,7 +125,7 @@ public class LoginController {
 
         MainPageController controller = loader.<MainPageController>getController();
 
-        new Client().askFriends();
+        Client.askFriends();
         new Client().checkFriends();
 
         ObservableList<String> friends = FXCollections.observableArrayList(Client.getUser().getFriends());
