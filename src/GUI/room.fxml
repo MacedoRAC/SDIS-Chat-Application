@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane prefHeight="400.0" prefWidth="169.0" style="-fx-background-color: #ffaf6f;">
+         <children>
+            <Text fill="#893d00" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="People chating:" textAlignment="CENTER" wrappingWidth="169.0">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
+            <ListView fx:id="peopleOnChat" layoutY="48.0" prefHeight="304.0" prefWidth="169.0" style="-fx-background-color: #893D00;" />
+            <Button fx:id="addPeopleBtn" layoutY="351.0" mnemonicParsing="false" onAction="#addPeopleToRoom" prefHeight="49.0" prefWidth="169.0" style="-fx-background-color: ffaf6f; -fx-background-radius: 0;" text="Add People" textFill="#893d00">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+         </children>
+      </Pane>
+      <ScrollPane fx:id="msgs" hbarPolicy="NEVER" layoutX="169.0" layoutY="-1.0" prefHeight="330.0" prefWidth="431.0">
+         <content>
+            <ListView fx:id="msgsContainer" prefHeight="329.0" prefWidth="430.0" stylesheets="@style.css" />
+         </content>
+      </ScrollPane>
+      <TextArea fx:id="msgField" layoutX="169.0" layoutY="329.0" prefHeight="71.0" prefWidth="359.0" promptText="Write your message here..." style="-fx-background-radius: 0; -fx-highlight-fill: #893d00; -fx-highlight-text-fill: #893d00; -fx-prompt-text-fill: #893d00;" />
+      <Button fx:id="sendBtn" layoutX="528.0" layoutY="329.0" mnemonicParsing="false" prefHeight="70.0" prefWidth="72.0" style="-fx-background-color: #893d00; -fx-background-radius: 0;" text="Send" textFill="#ffaf6f" />
+   </children>
+</AnchorPane>
