@@ -39,7 +39,7 @@
         </Button>
       </children>
     </Pane>
-    <ListView fx:id="listFriends" layoutX="-1.0" layoutY="192.0" prefHeight="313.0" prefWidth="342.0000999999975" style="-fx-background-color: #FFAF6F;" styleClass="mylistview" stylesheets="@scrollBar.css" />
+      <ListView fx:id="listFriends" layoutY="192.0" prefHeight="314.0" prefWidth="342.0" />
   </children>
   <stylesheets>
     <URL value="@scrollBar.css" />

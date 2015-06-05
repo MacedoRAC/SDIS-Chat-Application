@@ -21,12 +21,22 @@ public class Database {
     }
 
     private void populateUsers() {
+        User homer = new User("homer@simpsons.us","Homer", "1234");
+        homer.addFriend("burn@simpsons.us");
+        homer.addFriend("bart@simpsons.us");
 
-        users.put("burn@simpsons.us", new User("burn@simpsons.us", "Burn", "1234"));
-        users.put("homer@simpsons.us", new User("homer@simpsons.us","Homer", "1234"));
-        users.put("louis@simpsons.us", new User("louis@simpsons.us", "Louis", "1234"));
-        users.put("bart@simpsons.us", new User("bart@simpsons.us", "Bart", "1234"));
+        User burn = new User("burn@simpsons.us", "Burn", "1234");
+        burn.addFriend("homer@simpson.us");
+
+        User bart = new User("bart@simpsons.us", "Bart", "1234");
+        bart.addFriend("homer@simpsons.us");
+
+        users.put("burn@simpsons.us", burn);
+        users.put("homer@simpsons.us", homer);
+        users.put("marge@simpsons.us", new User("marge@simpsons.us", "Louis", "1234"));
+        users.put("bart@simpsons.us", bart);
         users.put("lisa@simpsons.us", new User("lisa@simpsons.us", "Lisa", "1234"));
+
     }
 
     private void printUsers() {

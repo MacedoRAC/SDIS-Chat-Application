@@ -18,6 +18,7 @@ import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 
@@ -113,7 +114,13 @@ public class LoginController {
 
         MainPageController controller = loader.<MainPageController>getController();
         new Client().checkFriends();
-        ObservableList<String> friends = FXCollections.observableArrayList(Client.getUser().getFriends());
+        ArrayList<String> list = Client.getUser().getFriends();
+        ObservableList<String> friends = FXCollections.observableArrayList("burn@simpsons.us", "bart@simpsons.us", "lisa@simpsons.us");
+
+        /*for(int i = 0; i < list.size(); i++){
+            friends.add(list.get(i));
+        }*/
+
         controller.initData(txtUsername.getText(), friends);
 
         Main.stage.show();

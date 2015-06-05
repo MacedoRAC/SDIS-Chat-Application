@@ -1,7 +1,7 @@
 package GUI;
 
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,7 +11,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import javax.xml.soap.Text;
 import java.io.IOException;
 
 /**
@@ -29,12 +28,15 @@ public class MainPageController {
     private Button logoutBtn;
 
     @FXML
-    private ListView listFriends = new ListView<String>();
+    private ListView<String> listFriends = new ListView<>();
 
 
     public void initData(String user, ObservableList<String> friends) {
+
         this.username.setText(user);
-        listFriends.setItems(friends);
+
+        if (friends != null)
+            listFriends.setItems(friends);
     }
 
     @FXML
