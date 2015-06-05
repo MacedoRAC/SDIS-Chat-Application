@@ -53,9 +53,13 @@ public class Database {
         this.users = db;
     }
 
-    public void add(String email, User user) {
+    public void addUser(String email, User user) {
         users.put(email, user);
 
         printUsers();
+    }
+    
+    public void addChannel(String id, Channel channel) {
+    	channels.put(id, channel);
     }
 }
