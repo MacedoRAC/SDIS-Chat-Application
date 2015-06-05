@@ -8,10 +8,12 @@ import java.util.Hashtable;
 public class Database {
 
     private Hashtable<String, User> users;
+    private Hashtable<String, Channel> channels;
 
 
     public Database(){
         users = new Hashtable<>();
+        channels = new Hashtable<>();
 
         populateUsers();
     }
