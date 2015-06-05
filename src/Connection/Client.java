@@ -31,9 +31,21 @@ public class Client {
 		
 		client.buildURL("localhost",8000);
 		
-		gui = new Main();
+		/*gui = new Main();
 		String[]argsFX = new String[0];
-		gui.run(argsFX);
+		gui.run(argsFX);*/
+		
+		client.login("homer@simpsons.us", "homer", "1234");
+		client.askFriends();
+		
+		Scanner scanner = new Scanner(System.in);
+		scanner.next();
+		
+		System.out.println("friends["+user.getFriends().size()+"]:");
+		for(int i=0;i<user.getFriends().size();i++)
+		{
+			System.out.println("\t"+user.getFriends().get(i));
+		}
 		
 	}
 	
@@ -42,7 +54,7 @@ public class Client {
 		urlS = "http://"+address+":"+port+"/";
 	}
 	
-	public static String signup(String email, String password)
+	public String signup(String email, String password)
 	{
 		//BUILD URL
 		URL url = null;
@@ -91,7 +103,7 @@ public class Client {
 
 		return answer;
 	}
-	public static String login(String email, String username, String password)
+	public String login(String email, String username, String password)
 	{
 		//BUILD URL
 		URL url = null;
@@ -197,6 +209,14 @@ public class Client {
 		Runnable r = new RefuseFriendThread(email);
 		Thread t = new Thread(r);
 		t.setName("refuseFriend");
+		t.start();
+		
+		return t.getId();
+	}
+	public long askFriends() {
+		Runnable r = new AskFriendsThread();
+		Thread t = new Thread(r);
+		t.setName("askFriends");
 		t.start();
 		
 		return t.getId();
@@ -511,6 +531,7 @@ public class Client {
 		}		
 	}
 	private class RefuseFriendThread implements Runnable {
+		
 		private String email;
 		
 		public RefuseFriendThread(String email) {
@@ -580,6 +601,74 @@ public class Client {
 			user.remFriendRequest(email);
 			
 			threads.put(Thread.currentThread().getId(), answer);
+		}
+		
+	}
+	private class AskFriendsThread implements Runnable {
+
+		@Override
+		public void run() {
+			
+			threads.put(Thread.currentThread().getId(), "");
+			
+			// BUILD URL
+			URL url = null;
+			try {
+				url = new URL(urlS + "friend?type=ask&?email=" + user.getEmail());
+			} catch (MalformedURLException e1) {
+				System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":error initializing url");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":url initialized (\"" + url + "\")");
+			
+			//CONNECT AND SEND REQUEST
+			HttpURLConnection url_connect = null;
+			try {
+				url_connect = (HttpURLConnection) url.openConnection();
+				
+				url_connect.setRequestMethod("GET");
+				url_connect.setReadTimeout(60*2*1000);
+				url_connect.connect();
+										
+			} catch (IOException e1) {
+				System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":error connecting");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":connected with request method \""+url_connect.getRequestMethod()+"\"");
+			System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":request sent");
+			
+			//READ RESPONSE
+			String answer=null;
+			try {
+				BufferedReader in  = new BufferedReader(new InputStreamReader(url_connect.getInputStream()));
+				answer = BufReaderToString(in);
+			} catch (IOException e) {
+				System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":error reading response");
+				e.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			
+			System.out.println("@Client/ask_friends/#+"+Thread.currentThread().getId()+":response received\nDATA:"+answer.trim());
+			
+			int indEB = answer.indexOf("<email>");
+			int indEE = answer.indexOf("</email>");
+			
+			while(indEB!=-1 && indEE!=-1)
+			{
+				String email = answer.substring(indEB+"<email>".length(),indEE);
+				user.addFriend(email);
+				
+				indEB = answer.indexOf("<email>", indEB+1);
+				indEE = answer.indexOf("</email>", indEE+1);
+			}
+						
+			threads.put(Thread.currentThread().getId(), "true");
+			
 		}
 		
 	}

@@ -502,6 +502,37 @@ public class Server {
 					{
 						activeReqs.add(new Request("check",email,request));
 					}
+					else if(type.equals("ask"))
+					{
+						if(!findUser(email))
+						{
+							System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":bad request received - email not registered \""+email+"\"");
+							response="error - email not registered \""+email+"\"";
+							code=400;
+						}
+						else
+						{
+							ArrayList<String> friends = db.getUsers().get(email).getFriends();
+							if(friends.size()>0) response="<email>"+friends.get(0)+"</email>\n";
+							for(int i=1;i<friends.size();i++)
+							{
+								response+="<email>"+friends.get(i)+"</email>\n";
+							}
+							
+							try {
+								request.sendResponseHeaders(200, response.length());
+								OutputStream os = request.getResponseBody();
+								os.write(response.getBytes());
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent to "+email+" \""+response+"\"");
+								os.close();
+							} catch (IOException e) {
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":error sending response: " + e);
+								e.printStackTrace();
+							}				
+
+							
+						}
+					}
 				}
 				else
 				{
