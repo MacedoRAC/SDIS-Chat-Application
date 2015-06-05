@@ -112,10 +112,11 @@ public class Server {
 				{
 					String email=query.substring(indE+"email=".length(),indP-2);
 					String pass=query.substring(indP+"pass=".length());
+					int passI=Integer.parseInt(pass);
 
 					if(!findUser(email))
 					{
-						db.add(email, new User(email,pass));
+						db.add(email, new User(email,passI));
 						System.out.println("@Server/signup/#+"+Thread.currentThread().getId()+":entry added");
 					}
 					else
@@ -197,9 +198,10 @@ public class Server {
 					String email=query.substring(indE+"email=".length(),indU-2);
 					String user=query.substring(indU+"user=".length(),indP-2);
 					String pass=query.substring(indP+"pass=".length());
+					int passI=Integer.parseInt(pass);
 					
 
-					if(!findUser(email) || !db.getUsers().get(email).getPassword().equals(pass))
+					if(!findUser(email) || db.getUsers().get(email).getPassword()!=passI)
 					{
 						System.out.println("@Server/login/#+"+Thread.currentThread().getId()+":no match was found for that email-pass pair");
 						response="false";

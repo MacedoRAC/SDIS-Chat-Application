@@ -22,11 +22,11 @@ public class Database {
 
     private void populateUsers() {
 
-        users.put("burn@simpsons.us", new User("burn@simpsons.us", "Burn", "1234"));
-        users.put("homer@simpsons.us", new User("homer@simpsons.us","Homer", "1234"));
-        users.put("louis@simpsons.us", new User("louis@simpsons.us", "Louis", "1234"));
-        users.put("bart@simpsons.us", new User("bart@simpsons.us", "Bart", "1234"));
-        users.put("lisa@simpsons.us", new User("lisa@simpsons.us", "Lisa", "1234"));
+        users.put("burn@simpsons.us", new User("burn@simpsons.us", "Burn", "1234".hashCode()));
+        users.put("homer@simpsons.us", new User("homer@simpsons.us","Homer", "1234".hashCode()));
+        users.put("louis@simpsons.us", new User("louis@simpsons.us", "Louis", "1234".hashCode()));
+        users.put("bart@simpsons.us", new User("bart@simpsons.us", "Bart", "1234".hashCode()));
+        users.put("lisa@simpsons.us", new User("lisa@simpsons.us", "Lisa", "1234".hashCode()));
     }
 
     private void printUsers() {

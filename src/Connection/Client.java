@@ -47,7 +47,7 @@ public class Client {
 		//BUILD URL
 		URL url = null;
 		try {
-			url = new URL(urlS+"signup?email="+email+"&?pass="+password);
+			url = new URL(urlS+"signup?email="+email+"&?pass="+password.hashCode());
 		} catch (MalformedURLException e1) {
 			System.out.println("@Client/signup:error initializing url");
 			e1.printStackTrace();
@@ -96,7 +96,7 @@ public class Client {
 		//BUILD URL
 		URL url = null;
 		try {
-			url = new URL(urlS+"login?email="+email+"&?user="+username+"&?pass="+password);
+			url = new URL(urlS+"login?email="+email+"&?user="+username+"&?pass="+password.hashCode());
 		} catch (MalformedURLException e1) {
 			System.out.println("@Client/login:error initializing url");
 			e1.printStackTrace();
