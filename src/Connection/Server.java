@@ -323,24 +323,31 @@ public class Server {
 								os2.write(response2.getBytes());
 								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent to "+friend+" \""+response2+"\"");
 								os2.close();
-								
-								request.sendResponseHeaders(200, response.length());				
-								OutputStream os = request.getResponseBody();
-								os.write(response.getBytes());
-								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent to "+email+" \""+response+"\"");
-								os.close();
-								
+																
 								db.getUsers().get(friend).addFriendRequest(email);
 								
 							} catch (IOException e) {
-								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":error sending response");
+								System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":error sending response to "+friend);
 								e.printStackTrace();
 							}
 						}
 						else
 						{
 							System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":can't find friend's check request (probably offline)");
+							response="error - friend offline or non active checkFriend request";					
 						}
+						
+						try {
+							request.sendResponseHeaders(200, response.length());
+							OutputStream os = request.getResponseBody();
+							os.write(response.getBytes());
+							System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent to "+email+" \""+response+"\"");
+							os.close();
+						} catch (IOException e) {
+							System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":error sending response to "+email);
+							e.printStackTrace();
+						}
+						
 					}
 					else if (type.equals("accept") && method.equals("PUT"))
 					{

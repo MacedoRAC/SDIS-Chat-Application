@@ -8,7 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 /**
- * Created by André on 04/06/2015.
+ * Created by Andrï¿½ on 04/06/2015.
  */
 public class AddFriendController {
 
@@ -31,12 +31,25 @@ public class AddFriendController {
     @FXML
     private void addFriend(){
         long threadID = new Client().sendFriend(txtEmail.getText());
+<<<<<<< HEAD
         String result = "error";
+        
+        //System.out.println("\n\n\n\n\n\n\n\n\n" + result + "\n\n\n\n\n\n\n\n\n");
+        while(new Client().getThreads().get(threadID)==null);
         result = new Client().getThreads().get(threadID);
-        System.out.println("\n\n\n\n\n\n\n\n\n" + result + "\n\n\n\n\n\n\n\n\n");
+        //TODO remove thread from hashtable
         if(!result.contains("error")) {
+=======
+        String result = new Client().getThreads().get(threadID);
+
+        while(result == null){
+            result = new Client().getThreads().get(threadID);
+        }
+
+        if(!result.contains("error") || !result.equals("null")) {
+>>>>>>> origin/master
             lblError.setText("");
-            lblSuccess.setText("Request sended.");
+            lblSuccess.setText("Request sent.");
 
             // get a handle to the stage
             Stage stage = (Stage) addFriendBtn.getScene().getWindow();
