@@ -6,8 +6,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.RoomController">
    <children>
       <Pane prefHeight="400.0" prefWidth="169.0" style="-fx-background-color: #ffaf6f;">
          <children>
@@ -24,12 +23,8 @@
             </Button>
          </children>
       </Pane>
-      <ScrollPane fx:id="msgs" hbarPolicy="NEVER" layoutX="169.0" layoutY="-1.0" prefHeight="330.0" prefWidth="431.0">
-         <content>
-            <ListView fx:id="msgsContainer" prefHeight="329.0" prefWidth="430.0" stylesheets="@style.css" />
-         </content>
-      </ScrollPane>
+      <ListView fx:id="msgsContainer" layoutX="169.0" prefHeight="329.0" prefWidth="430.0" stylesheets="@style.css" />
       <TextArea fx:id="msgField" layoutX="169.0" layoutY="329.0" prefHeight="71.0" prefWidth="359.0" promptText="Write your message here..." style="-fx-background-radius: 0; -fx-highlight-fill: #893d00; -fx-highlight-text-fill: #893d00; -fx-prompt-text-fill: #893d00;" />
-      <Button fx:id="sendBtn" layoutX="528.0" layoutY="329.0" mnemonicParsing="false" prefHeight="70.0" prefWidth="72.0" style="-fx-background-color: #893d00; -fx-background-radius: 0;" text="Send" textFill="#ffaf6f" />
+      <Button fx:id="sendBtn" layoutX="528.0" layoutY="329.0" mnemonicParsing="false" onAction="#send" prefHeight="70.0" prefWidth="72.0" style="-fx-background-color: #893d00; -fx-background-radius: 0;" text="Send" textFill="#ffaf6f" />
    </children>
 </AnchorPane>
