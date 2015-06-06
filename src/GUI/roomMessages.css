@@ -25,3 +25,13 @@
     -fx-background-color: #FFD1AC;
     -fx-text-fill: #3A1A00;
 }
+
+/*#comboBox .list-cell
+{
+    -fx-text-fill:  #893D00;
+}*/
+
+#comboBox .text-field
+{
+     -fx-prompt-text-fill: #893D00;
+}

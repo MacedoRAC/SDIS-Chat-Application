@@ -105,7 +105,7 @@ public class MainPageController {
 
         RoomController controller = loader.<RoomController>getController();
 
-        controller.initData(Client.getUser().getUsername(), friend);
+        controller.initData(Client.getUser().getUsername(), friend, Client.getUser().getFriends());
 
         stage.show();
     }

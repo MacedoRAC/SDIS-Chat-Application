@@ -15,12 +15,13 @@
                   <Font size="18.0" />
                </font>
             </Text>
-            <ListView fx:id="peopleOnChat" layoutY="48.0" prefHeight="304.0" prefWidth="169.0" style="-fx-background-color: #893D00;" stylesheets="@style.css" />
-            <Button fx:id="addPeopleBtn" layoutY="351.0" mnemonicParsing="false" onAction="#addPeopleToRoom" prefHeight="49.0" prefWidth="169.0" style="-fx-background-color: ffaf6f; -fx-background-radius: 0;" styleClass="btnZoom" stylesheets="@style.css" text="Add People" textFill="#893d00">
+            <ListView fx:id="peopleOnChat" layoutY="48.0" prefHeight="282.0" prefWidth="169.0" style="-fx-background-color: #893D00;" stylesheets="@style.css" />
+            <Button fx:id="addPeopleBtn" layoutY="370.0" mnemonicParsing="false" onAction="#addPeopleToRoom" prefHeight="30.0" prefWidth="169.0" style="-fx-background-color: ffaf6f; -fx-background-radius: 0;" styleClass="btnZoom" stylesheets="@style.css" text="Add Friend" textFill="#893d00">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
+            <ComboBox fx:id="comboBox" layoutY="330.0" prefHeight="38.0" prefWidth="169.0" promptText="Select friend to add" style="-fx-background-color: transparent; -fx-border-color: #893D00;" stylesheets="@roomMessages.css" visibleRowCount="4" />
          </children>
       </Pane>
       <ListView fx:id="msgsContainer" layoutX="169.0" prefHeight="329.0" prefWidth="430.0" stylesheets="@roomMessages.css" />

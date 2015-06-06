@@ -6,9 +6,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -31,6 +33,9 @@ public class RoomController {
     @FXML
     private Button sendBtn;
 
+    @FXML
+    private ComboBox<String> comboBox;
+
     private String channelID;
 
     @FXML
@@ -52,11 +57,18 @@ public class RoomController {
 
     @FXML
     private void addPeopleToRoom(){
+        String friendToAdd = comboBox.getValue();
+
+        ObservableList<String> alreadyAdded = peopleOnChat.getItems();
 
     }
 
-    public void initData(String myUsername, String friend) {
+    public void initData(String myUsername, String friend, ArrayList<String> friends) {
         ObservableList<String> people = FXCollections.observableArrayList(myUsername, friend);
         this.peopleOnChat.setItems(people);
+
+        friends.remove(friend);
+
+        comboBox.setItems(FXCollections.observableArrayList(friends));
     }
 }
