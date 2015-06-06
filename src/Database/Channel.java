@@ -10,18 +10,26 @@ public class Channel {
 
     private String id;
     private String name;
-    private ArrayList<User> users;
+    private ArrayList<String> users;
     private ArrayList<Message> msgs;
 
-   public Channel(){
-        this.id = generateRandomId();
-        this.name = "";
-        this.users = new ArrayList<>();
-        this.msgs = new ArrayList<>();
+   public Channel(ArrayList<String> ids){
+	   String id = "";
+	   do{
+		   id = generateRandomId();
+	   }while(ids.contains(id));
+	   this.id = id;
+	   this.name = "";
+	   this.users = new ArrayList<>();
+	   this.msgs = new ArrayList<>();
     }
    
-   public Channel(String name){
-       this.id = generateRandomId();
+   public Channel(String name, ArrayList<String> ids){
+	   String id = "";
+	   do{
+		   id = generateRandomId();
+	   }while(ids.contains(id));
+	   this.id = id;
        setName(name);
        this.users = new ArrayList<>();
        this.msgs = new ArrayList<>();
@@ -34,6 +42,12 @@ public class Channel {
     {
     	return name;
     }
+    public ArrayList<String> getUsers() {
+    	return users;
+    }
+    public ArrayList<Message> getMessages() {
+    	return msgs;
+    }
     
     public void setId(String id) {
         this.id = id;
@@ -42,12 +56,12 @@ public class Channel {
     {
     	this.name=name;
     }
-    public void addUser(User new_user){
+    public void addUser(String email){
 
-        if(!users.contains(new_user)) {
-            users.add(new_user);
+        if(!users.contains(email)) {
+            users.add(email);
         }else{
-            System.out.println("User " + new_user.getUsername() + " is already in this channel");
+            System.out.println("User " + email + " is already in this channel");
         }
     }
     public void removeUser(User new_user){
@@ -62,6 +76,8 @@ public class Channel {
     {
     	msgs.add(msg);
     }
+    
+    
     
     private String generateRandomId(){
 

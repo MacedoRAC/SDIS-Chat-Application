@@ -1,5 +1,6 @@
 package Database;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 /**
@@ -61,5 +62,22 @@ public class Database {
     
     public void addChannel(String id, Channel channel) {
     	channels.put(id, channel);
+    }
+    
+    public ArrayList<String> getChannelIDs() {
+    	
+    	ArrayList<String> ret = new ArrayList<String>();
+    	
+    	ArrayList<Channel> arr = new ArrayList<Channel>(channels.values());
+    	for(int i=0;i<arr.size();i++)
+    	{
+    		ret.add(arr.get(i).getId());
+    	}
+    	
+    	return ret;
+    }
+    
+    public Hashtable<String, Channel> getChannels() {
+    	return channels;
     }
 }

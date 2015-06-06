@@ -18,6 +18,13 @@ public class Message {
 		this.date = new Date();
 	}
 	
+	public Message(String content,String sender, Date date)
+	{
+		this.content=content;
+		this.sender=sender;
+		this.date = date;
+	}
+	
 	public String getContent()
 	{
 		return content;
@@ -29,6 +36,10 @@ public class Message {
 	public Date getDate()
 	{
 		return date;
+	}
+	
+	public String toString() {
+		return "["+date.toString()+" - "+sender+"]: "+content;
 	}
 	
 }

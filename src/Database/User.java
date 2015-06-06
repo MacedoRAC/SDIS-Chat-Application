@@ -1,6 +1,7 @@
 package Database;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class User {
 	
@@ -9,6 +10,7 @@ public class User {
 	private int password;
 	private ArrayList<String> friends=new ArrayList<String>();
 	private ArrayList<String> friendRequests = new ArrayList<String>();
+	private Hashtable<String, Channel> channels = new Hashtable<>();
 	
 	public User(){}
 	public User(String email, String username, int password) {
@@ -37,6 +39,9 @@ public class User {
 	}
 	public ArrayList<String> getFriendRequests() {
 		return friendRequests;
+	}
+	public Hashtable<String, Channel> getChannels() {
+		return channels;
 	}
 	
 	public void setEmail(String email) {
@@ -74,6 +79,11 @@ public class User {
 	{
 		return friendRequests.remove(email);
 	}
+	public void addChannel(Channel cnl)
+	{
+		channels.put(cnl.getId(), cnl);
+	}
+	
 	
     @Override
     public boolean equals(Object obj) {
