@@ -45,7 +45,7 @@ public class RoomController {
 
             new Client().sendMessage(msgField.getText(), threadID);
             ObservableList<String> items = msgsContainer.getItems();
-            items.add(msgField.getText());
+            items.add(msgField.getText()); /* Substituir por algo deste genero: items.add("Message send at " + Message.getDate() + " by " + Message.getSender() + "\n\n" + Message.getContent()) */
             msgField.setText("");
         }
     }
