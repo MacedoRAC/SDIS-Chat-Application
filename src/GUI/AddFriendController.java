@@ -1,7 +1,9 @@
 package GUI;
 
 import Connection.Client;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -39,6 +41,11 @@ public class AddFriendController {
         if(!result.contains("error")) {
             lblError.setText("");
             lblSuccess.setText("Request sent.");
+
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("mainPage.fxml"));
+            MainPageController controller = loader.<MainPageController>getController();
+            controller.setFriendsList(FXCollections.observableArrayList(Client.getUser().getFriends()));
 
             // get a handle to the stage
             Stage stage = (Stage) addFriendBtn.getScene().getWindow();

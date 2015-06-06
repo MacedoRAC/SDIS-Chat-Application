@@ -106,4 +106,8 @@ public class MainPageController {
 
         stage.show();
     }
+
+    public void setFriendsList(ObservableList<String> friendsList) {
+        this.listFriends.setItems(friendsList);
+    }
 }
