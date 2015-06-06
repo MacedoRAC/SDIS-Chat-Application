@@ -9,7 +9,9 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
+import Database.Channel;
 import Database.Database;
+import Database.Message;
 import Database.User;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -513,9 +515,9 @@ public class Server {
 						}
 						else
 						{
+							response+="\n";
 							ArrayList<String> friends = db.getUsers().get(email).getFriends();
-							if(friends.size()>0) response="<email>"+friends.get(0)+"</email>\n";
-							for(int i=1;i<friends.size();i++)
+							for(int i=0;i<friends.size();i++)
 							{
 								response+="<email>"+friends.get(i)+"</email>\n";
 							}
@@ -595,7 +597,7 @@ public class Server {
 				code=400;
 			}
 			
-			String type=query.substring(indT+"type=".length(), indE - 2);
+			String type=query.substring(indT+"type=".length(), indE - 1);
 			String email=query.substring(indE+"email=".length());
 			
 			if(response.equals("true"))
@@ -641,9 +643,47 @@ public class Server {
 						
 						if(response.equals("true"))
 						{
-														
+							Channel cnl;
+							if(name.isEmpty()) cnl = new Channel(db.getChannelIDs());
+							else cnl = new Channel(name,db.getChannelIDs());
+							cnl.addUser(email);
+							cnl.addUser(friend);
+							
+							db.addChannel(cnl.getId(), cnl);
+							
+							response+="\n<channelID>"+cnl.getId()+"</channelID>";
 						}
 						
+						
+					}
+					else if(type.equals("send"))
+					{
+						int indC = query.indexOf("channelid=");
+						if (indC == -1)
+						{
+							System.out.println("@Server/channel/#+"+Thread.currentThread().getId()+":bad request received - can't find \"channelid=\"");
+							response = "error - no valid name query";
+							code = 400;
+						}
+						else
+						{
+							email = query.substring(indE + "email=".length(), indC - 1);
+							String channelid = query.substring(indC + "channelid=".length());
+							
+							if(!findUser(email))
+							{
+								System.out.println("@Server/channel/#+"+Thread.currentThread().getId()+":bad request received - email not registered \""+email+"\"");
+								response="error - email not registered \""+email+"\"";
+								code=400;
+							}
+							else
+							{
+								String body = InStreamToString(request.getRequestBody());
+								System.out.println("@Server/channel/#+"+Thread.currentThread().getId()+" Body:\""+body+"\"");
+								db.getChannels().get(channelid).addMessage(new Message(body,email));
+							}
+							
+						}
 						
 					}
 					else
@@ -660,21 +700,26 @@ public class Server {
 					code=400;
 				}
 			}
-			else
-			{
-				try {
-					request.sendResponseHeaders(code, response.length());				
-					OutputStream os = request.getResponseBody();
-					os.write(response.getBytes());
-					System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":response sent \""+response+"\"");
-					os.close();
-					
-				} catch (IOException e) {
-					System.out.println("@Server/friend/#+"+Thread.currentThread().getId()+":error sending response: " + e);
-					e.printStackTrace();
-				}
+			
+			try {
+				request.sendResponseHeaders(code, response.length());
+				OutputStream os = request.getResponseBody();
+				os.write(response.getBytes());
+				System.out.println("@Server/friend/#+"+ Thread.currentThread().getId() + ":response sent \""+ response + "\"");
+				os.close();
+
+			} catch (IOException e) {
+				System.out.println("@Server/friend/#+"+ Thread.currentThread().getId()+ ":error sending response: " + e);
+				e.printStackTrace();
 			}
-						
+			
+			ArrayList<Channel> arr = new ArrayList<Channel>(db.getChannels().values());
+			
+			System.out.println("Channels["+arr.size()+"]");
+			System.out.println("\tname="+arr.get(0).getName());
+			System.out.println("\tusers["+arr.get(0).getUsers().size()+"]");
+			System.out.println("\t"+arr.get(0).getUsers().get(0));
+			System.out.println("\t"+arr.get(0).getUsers().get(1));
 		}
 		
 	}
