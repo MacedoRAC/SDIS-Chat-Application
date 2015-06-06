@@ -1,15 +1,19 @@
 package Connection;
 
+import Database.Channel;
+import Database.Message;
 import Database.User;
 import GUI.Main;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 //import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Scanner;
 
@@ -31,21 +35,35 @@ public class Client {
 		
 		client.buildURL("localhost",8000);
 		
-		gui = new Main();
+		/*gui = new Main();
 		String[]argsFX = new String[0];
-		gui.run(argsFX);
+		gui.run(argsFX);*/
 		
-		/*client.login("homer@simpsons.us", "homer", "1234");
+		client.login("homer@simpsons.us", "homer", "1234");
 		client.askFriends();
+		
+		client.createChannel("test_channel", user.getFriends().get(0));
 		
 		Scanner scanner = new Scanner(System.in);
 		scanner.next();
 		
-		System.out.println("friends["+user.getFriends().size()+"]:");
-		for(int i=0;i<user.getFriends().size();i++)
-		{
-			System.out.println("\t"+user.getFriends().get(i));
-		}*/
+		ArrayList<Channel> arr = new ArrayList<Channel>(user.getChannels().values());
+		
+		System.out.println("Channels["+arr.size()+"]");
+		System.out.println("\tname="+arr.get(0).getName());
+		System.out.println("\tusers["+arr.get(0).getUsers().size()+"]");
+		System.out.println("\t"+arr.get(0).getUsers().get(0));
+		System.out.println("\t"+arr.get(0).getUsers().get(1));
+		
+		client.sendMessage("helloooooo", arr.get(0).getId());
+		
+		scanner.next();
+		
+		arr = new ArrayList<Channel>(user.getChannels().values());
+		
+		System.out.println("Messages["+arr.get(0).getMessages().size()+"]=");
+		System.out.println("\t0="+arr.get(0).getMessages().get(0));
+		
 		
 	}
 	
@@ -268,6 +286,22 @@ public class Client {
 		}
 		
 		return "true";
+	}
+	public long createChannel(String name, String email) {
+		Runnable r = new CreateChannelThread(name, email);
+		Thread t = new Thread(r);
+		t.setName("createChannel");
+		t.start();
+		
+		return t.getId();
+	}
+	public long sendMessage(String content, String channelID) {
+		Runnable r = new SendMessageThread(content, channelID);
+		Thread t = new Thread(r);
+		t.setName("sendMessage");
+		t.start();
+		
+		return t.getId();
 	}
 	
 	private class CheckFriendsThread implements Runnable {
@@ -652,19 +686,188 @@ public class Client {
 		}
 		
 	}
-
 	private class CreateChannelThread implements Runnable {
 		
 		private String name;
+		private String email;
 		
-		public CreateChannelThread(String name)
+		public CreateChannelThread(String name, String email)
 		{
 			this.name=name;
+			this.email=email;
 		}
 
 		@Override
 		public void run() {
+			
+			threads.put(Thread.currentThread().getId(), "");
 						
+			// BUILD URL
+			URL url = null;
+			try {
+				url = new URL(urlS + "channel?type=create&email="+user.getEmail()+"&name="+name+"&friend="+email);
+			} catch (MalformedURLException e1) {
+				System.out.println("@Client/create_channel/#+"+Thread.currentThread().getId()+":error initializing url");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/create_channel/#+"+Thread.currentThread().getId()+":url initialized (\"" + url + "\")");
+			
+			//CONNECT AND SEND REQUEST
+			HttpURLConnection url_connect = null;
+			try {
+				url_connect = (HttpURLConnection) url.openConnection();
+				
+				url_connect.setRequestMethod("PUT");
+				url_connect.setReadTimeout(60*1000);
+				url_connect.connect();
+										
+			} catch (IOException e1) {
+				System.out.println("@Client/create_channel/#+"+Thread.currentThread().getId()+":error connecting");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/create_channel/#+"+Thread.currentThread().getId()+":connected with request method \""+url_connect.getRequestMethod()+"\"");
+			System.out.println("@Client/create_channel/#+"+Thread.currentThread().getId()+":request sent");
+			
+			//READ RESPONSE
+			String answer = null;
+			try {
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						url_connect.getInputStream()));
+				answer = BufReaderToString(in);
+			} catch (IOException e) {
+				System.out.println("@Client/create_channel/#+"+Thread.currentThread().getId()+":error reading response");
+				e.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+
+			System.out.println("@Client/create_channel/#+"+Thread.currentThread().getId()+":response received\nDATA:"
+					+ answer.trim());
+			
+			if(answer.startsWith("true"))
+			{
+				int indCB = answer.indexOf("<channelID>");
+				int indCE = answer.indexOf("</channelID>");
+				
+				if(indCB==-1 || indCE==-1)
+				{
+					System.out.println("@Client/create_channel/#+"+Thread.currentThread().getId()+":bad response received - can't find \"<channelID>\" or \"</channelID>\" tags in body");
+					threads.put(Thread.currentThread().getId(), "server error");
+					return;
+				}
+				else
+				{
+					String id = answer.substring(indCB+"<channelID>".length(),indCE);
+					Channel cnl = new Channel(new ArrayList<String>());
+					cnl.setId(id);
+					cnl.setName(name);
+					cnl.addUser(user.getEmail());
+					cnl.addUser(email);
+					user.addChannel(cnl);
+				}
+			}
+			
+			threads.put(Thread.currentThread().getId(), answer);
+		}
+		
+	}
+	private class SendMessageThread implements Runnable {
+
+		private String content;
+		private String channelID;
+		
+		public SendMessageThread(String content, String channelID)
+		{
+			this.content=content;
+			this.channelID=channelID;
+		}
+		
+		@Override
+		public void run() {
+			
+			threads.put(Thread.currentThread().getId(), "");
+			
+			if(!user.getChannels().contains(channelID))
+			{
+				System.out.println("@Client/send_message/#+"+Thread.currentThread().getId()+":error - channel not found");
+				threads.put(Thread.currentThread().getId(), "client error");
+			}
+			
+			// BUILD URL
+			URL url = null;
+			try {
+				url = new URL(urlS + "channel?type=send&email="+user.getEmail()+"&channelid="+channelID);
+			} catch (MalformedURLException e1) {
+				System.out.println("@Client/send_message/#+"+Thread.currentThread().getId()+":error initializing url");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			System.out.println("@Client/send_message/#+"+Thread.currentThread().getId()+":url initialized (\"" + url + "\")");
+			
+			//CONNECT AND SEND REQUEST
+			HttpURLConnection url_connect = null;
+			OutputStreamWriter out = null;
+			try {
+				url_connect = (HttpURLConnection) url.openConnection();
+				
+				url_connect.setDoOutput(true);
+				url_connect.setRequestMethod("PUT");
+				url_connect.setReadTimeout(60*2*1000);
+				url_connect.connect();
+				
+				out = new OutputStreamWriter(url_connect.getOutputStream());
+				
+			} catch (IOException e1) {
+				System.out.println("@Client/send_message/#+"+Thread.currentThread().getId()+":error connecting");
+				e1.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+			
+			//WRITE REQUEST
+			try {
+				out.write(content);
+				out.flush();
+				out.close();
+			} catch (IOException e1) {
+				System.out.print("@Client:error sending request\n");
+				e1.printStackTrace();
+				return;
+			}
+			
+			System.out.println("@Client/send_message/#+"+Thread.currentThread().getId()+":connected with request method \""+url_connect.getRequestMethod()+"\"");
+			System.out.println("@Client/send_message/#+"+Thread.currentThread().getId()+":request sent");
+			
+			//READ RESPONSE
+			String answer = null;
+			try {
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						url_connect.getInputStream()));
+				answer = BufReaderToString(in);
+			} catch (IOException e) {
+				System.out.println("@Client/send_message/#+"+Thread.currentThread().getId()+":error reading response");
+				e.printStackTrace();
+				threads.put(Thread.currentThread().getId(), "client error");
+				return;
+			}
+
+			System.out.println("@Client/send_message/#+"+Thread.currentThread().getId()+":response received\nDATA:"
+					+ answer.trim());
+			
+			if(answer.startsWith("true"))
+			{
+				user.getChannels().get(channelID).addMessage(new Message(content, user.getEmail()));
+			}
+			else
+			{
+				System.out.println("@Client/send_message/#+"+Thread.currentThread().getId()+":error - server response != true");				
+			}
+			
 		}
 		
 	}
