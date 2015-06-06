@@ -23,8 +23,8 @@
             </Button>
          </children>
       </Pane>
-      <ListView fx:id="msgsContainer" layoutX="169.0" prefHeight="329.0" prefWidth="430.0" />
-      <TextArea fx:id="msgField" layoutX="169.0" layoutY="329.0" prefHeight="71.0" prefWidth="359.0" promptText="Write your message here..." style="-fx-background-radius: 0; -fx-highlight-fill: #893d00; -fx-highlight-text-fill: #893d00; -fx-prompt-text-fill: #893d00;" />
+      <ListView fx:id="msgsContainer" layoutX="169.0" prefHeight="329.0" prefWidth="430.0" stylesheets="@roomMessages.css" />
+      <TextArea fx:id="msgField" layoutX="169.0" layoutY="329.0" prefHeight="71.0" prefWidth="359.0" promptText="Write your message here..." style="-fx-background-radius: 0; -fx-highlight-fill: #fff; -fx-highlight-text-fill: #893d00; -fx-prompt-text-fill: #893d00; -fx-border-color: #893d00; -fx-text-fill: #893d00;" />
       <Button fx:id="sendBtn" layoutX="528.0" layoutY="329.0" mnemonicParsing="false" onAction="#send" prefHeight="70.0" prefWidth="72.0" style="-fx-background-color: #893d00; -fx-background-radius: 0;" styleClass="btnZoom" stylesheets="@style.css" text="Send" textFill="#ffaf6f" />
    </children>
 </AnchorPane>

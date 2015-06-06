@@ -35,11 +35,11 @@ public class Client {
 		
 		client.buildURL("localhost",8000);
 		
-		/*gui = new Main();
+		gui = new Main();
 		String[]argsFX = new String[0];
-		gui.run(argsFX);*/
+		gui.run(argsFX);
 		
-		client.login("homer@simpsons.us", "homer", "1234");
+		/*client.login("homer@simpsons.us", "homer", "1234");
 		client.askFriends();
 		
 		client.createChannel("test_channel", user.getFriends().get(0));
@@ -62,7 +62,7 @@ public class Client {
 		arr = new ArrayList<Channel>(user.getChannels().values());
 		
 		System.out.println("Messages["+arr.get(0).getMessages().size()+"]=");
-		System.out.println("\t0="+arr.get(0).getMessages().get(0));
+		System.out.println("\t0="+arr.get(0).getMessages().get(0));*/
 		
 		
 	}

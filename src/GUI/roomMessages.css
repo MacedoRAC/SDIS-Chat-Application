@@ -1,0 +1,27 @@
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: #893D00;
+    -fx-text-fill: white;
+}
+
+.list-cell {
+    -fx-text-fill: #3A1A00;
+    -fx-alignment: left ;
+}
+
+.list-cell:odd {
+    -fx-background-color: #FFE8D5;
+}
+
+.list-cell:even {
+    -fx-background-color: #FFD1AC;
+}
+
+.list-cell:odd:filled:hover {
+    -fx-background-color: #FFE8D5;
+    -fx-text-fill: #3A1A00;
+}
+
+.list-cell:even:filled:hover {
+    -fx-background-color: #FFD1AC;
+    -fx-text-fill: #3A1A00;
+}

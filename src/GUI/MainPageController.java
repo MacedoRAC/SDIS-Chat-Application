@@ -86,6 +86,9 @@ public class MainPageController {
     private void openRoom(MouseEvent event){
         String friend = listFriends.getSelectionModel().getSelectedItem();
 
+        /* open communication channel */
+        new Client().createChannel("", friend);
+
         Parent root = null;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("room.fxml"));
         try {
